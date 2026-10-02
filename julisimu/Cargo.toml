@@ -4,3 +4,25 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+
+bevy = { version = "0.19.1", default-features = false, features = [
+    "2d",               # Camera2d, Mesh2d, ColorMaterial
+    "bevy_winit",       # Window handling
+    "bevy_gizmos",      # Required for gizmos
+    "bevy_window",      # WindowPlugin
+    "x11",              # Linux display support
+    "wayland",          # Wayland display support
+    "default_platform", # Handshakes with native OS windows 
+    "bevy_render",      # Required for materials and textures core
+    "bevy_asset"        # Required for assets management core
+] }
+
+[profile.release]
+opt-level = 'z'  
+lto = true        
+codegen-units = 1  
+panic = 'abort'     
+strip = true      
+
+[profile.dev.package."*"]
+debug=false
