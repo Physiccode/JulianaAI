@@ -1,0 +1,15 @@
+Idea:
+use ESP32 to host a website that will contain the data of hte simulation in RAM ,and people can enter the website on the esp32 and send commands so that my computer adds predators or changes the environment
+
+setup
+first connect pc to esp32,then:
+python findesp.py 
+should output "esp found at <IP>:<Port>"
+
+speech
+Em 1859 Charles Darwin argumentou que a mão de um ser humano,a pata de um cavalo,a nadadeira de uma baleia e a asa do morcego eram todas feitas sobre o mesmo modelo.Esta afirmação parece absurda,uma vez que elas são visívelmente diferentes na superfície e realizam funções completamente diferentes,mas Charles Darwin argumentava atravéz da anatomia comparada que todos estes compartilham o mesmo ancestral,e,por isto possuem uma estrutura óssea semelhante.
+
+Tudo começa em 4 AC,Aristóteles estuda e descreve cerca de 500 animais,dentre estes,disseca 50 espécies para examinar orgãos internos e entender as semelhanças ou diferenças presentes nestes animais,constituindo assim,a anatomia comparada e fazendo de aristóteles o pai da anatomia comparada.Porém,Aristóteles defendia exatamente o oposto do evolucionismo,ele dizia que um gato sempre gerava um gato,um leão sempre gerava um leão,defendendo que podiam até existir variações  individuais dentro de uma espécie,mas estas variações nunca mudavam a identidade fundamental do animal,hipótese esta que é atribuida o nome de fixismo.
+
+Cerca de 2 séculos e meio mais tarde,Charles Darwin analisou o ramo científico da anatomia comparada,e concluiu que na verdade,ela é uma prova imensa ao evolucionismo.Por exemplo:Charles Darwin percebeu que,se todas as espécies tivessem sido criadas de forma independente,não haveria razão das baleias terem ossos de dedos dentro das suas nadadeiras,concluiu assim que os mamíferos herdaram  a estrutura básica de um ancestral comum,e que a seleção natural modificou estes membros ao longo do tempo para nadar,voar,correr e segurar objectos,refutando o fixismo atravéz das estruturas homólogas.
+
