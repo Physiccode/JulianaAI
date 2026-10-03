@@ -1,10 +1,10 @@
 use bevy::{
     prelude::*,
     diagnostic::{FrameTimeDiagnosticsPlugin,DiagnosticsStore},
-    gltf::GltfAssetLabel,
 };
 mod utils;
 use utils::camera::{setup,move_camera};
+use utils::movement::*;
 
 fn main() {
     App::new()
@@ -16,7 +16,9 @@ fn main() {
             ..default()
         }))
         .add_systems(Startup,setup)
-        .add_systems(Update,(move_camera,draw_grid))
+        .add_systems(Update,
+            (move_camera,spawn_food,move_juliana,eat,draw_grid)
+            .chain())
         .run();
 }
 

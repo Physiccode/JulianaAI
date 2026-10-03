@@ -2,18 +2,12 @@ use bevy::input::mouse::AccumulatedMouseMotion;
 use bevy::light::PointLight;
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode,CursorOptions};
+use super::data::*;
 
-#[derive(Component)]
-pub struct MovableCamera;
-
-// TODO:Add a file to store all constants and structs
-const CAMERA_SENSIVITY:f32 = 0.003;
-const CAMERA_SPEED:f32 = 7.0;
 
 pub fn setup(
     mut commands:Commands,
     asset_server:Res<AssetServer>,
-    mut meshes:ResMut<Assets<Mesh>>,
     mut materials:ResMut<Assets<StandardMaterial>>
     ) {
    //Spawn camera
@@ -36,17 +30,8 @@ pub fn setup(
    
    */
 
-   /*
-   // spawn sphere 
-   commands.spawn((
-           Mesh3d(meshes.add(Sphere::default().mesh().uv(32,18))),
-           MeshMaterial3d(materials.add(StandardMaterial{
-               base_color:Color::from(bevy::color::palettes::tailwind::BLUE_500),
-               ..default()
-           })),
-          Transform::from_xyz(0.0,0.5,0.0)   
-           ));
-*/
+   
+   // Spawn first juliana
    commands.spawn((
            WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
            Transform::from_xyz(0.0,0.5,0.0).with_scale(Vec3::splat(0.01))
