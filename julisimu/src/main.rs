@@ -87,8 +87,17 @@ fn move_camera(
     let delta = accumulated_mouse_motion.delta;
 
     if delta != Vec2::ZERO {
-        transform.rotate_y(-delta.x * CAMERA_SENSIVITY);
-        transform.rotate_x(-delta.y * CAMERA_SENSIVITY);
+        // Prevent Gimbal lock 
+        let (mut yaw,mut pitch,_) = transform.rotation.to_euler(EulerRot::YXZ);
+        yaw -= delta.x * CAMERA_SENSIVITY;
+        pitch -= delta.y * CAMERA_SENSIVITY;
+
+        // Clamp pitch 
+        let max_pitch = std::f32::consts::FRAC_PI_2 - 0.05; // Don't allow the player to look
+                                                            // exactly 90º up or down
+        pitch = pitch.clamp(-max_pitch,max_pitch);
+        // Force roll to stay exactly 0.0
+        transform.rotation = Quat::from_euler(EulerRot::YXZ,yaw,pitch,0.0);
     }
 
 
@@ -114,12 +123,12 @@ fn move_camera(
         transform.translation += right * move_direction; 
     }
 
-    if keyboard_input.pressed(KeyCode::ShiftLeft){
-        transform.translation -= up * move_direction; 
+    if keyboard_input.pressed(KeyCode::Space){
+        transform.translation += up * move_direction; 
     }
     
-    if keyboard_input.pressed(KeyCode::ControlLeft){
-        transform.translation += up * move_direction; 
+    if keyboard_input.pressed(KeyCode::ControlLeft) || keyboard_input.pressed(KeyCode::ShiftLeft){
+        transform.translation -= up * move_direction; 
     }
 
 }
