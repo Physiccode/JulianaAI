@@ -6,6 +6,10 @@ first connect pc to esp32,then:
 python findesp.py 
 should output "esp found at <IP>:<Port>"
 
+Week 1: grid, camera, julia0 as your sphere, food, energy, death, then trees and a chasing predator.
+Week 2: the brain above, the bone genome drawn on the body, generations, mutation, CSV logging of every birth.
+Week 3: the three experiments, family tree and graphs, slides, rehearsal, with the last 3 days as buffer.
+
 speech
 Em 1859 Charles Darwin argumentou que a mão de um ser humano,a pata de um cavalo,a nadadeira de uma baleia e a asa do morcego eram todas feitas sobre o mesmo modelo.Esta afirmação parece absurda,uma vez que elas são visívelmente diferentes na superfície e realizam funções completamente diferentes,mas Charles Darwin argumentava atravéz da anatomia comparada que todos estes compartilham o mesmo ancestral,e,por isto possuem uma estrutura óssea semelhante.
 
