@@ -34,7 +34,8 @@ pub fn setup(
    // Spawn first juliana
    commands.spawn((
            WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
-           Transform::from_xyz(0.0,0.5,0.0).with_scale(Vec3::splat(0.01))
+           Transform::from_xyz(0.0,0.5,0.0).with_scale(Vec3::splat(0.01)),
+           Juliana
            ));
 }
 

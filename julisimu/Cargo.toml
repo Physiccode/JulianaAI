@@ -5,7 +5,8 @@ edition = "2024"
 
 [dependencies]
 
-bevy = "0.19.1"
+#TODO:REMOVE THE DYANMIC LINKING BEFORE PROD RELEASE
+bevy = { version="0.19.1" , features=["dynamic_linking"] }
 rand = "0.10.3"
 [profile.release]
 opt-level = 'z'  
