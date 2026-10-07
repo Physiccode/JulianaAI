@@ -10,13 +10,13 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin{
             primary_window:Some(Window{
-                title:"JulianaAI-Evolutionism simulation".to_string(),
+                title:"JulianaAI-Compared anatomy simulation".to_string(),
                 ..default()
             }),
             ..default()
         }))
         .add_systems(Startup,setup)
-        .add_systems(Update,(move_camera,spawn_food,move_juliana,draw_grid))
+        .add_systems(Update,(move_camera,spawn_food,move_juliana,draw_grid,starve_juliana))
         .run();
 }
 

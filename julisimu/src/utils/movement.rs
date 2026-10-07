@@ -7,24 +7,29 @@ pub fn move_juliana(
     mut commands:Commands,
     time:Res<Time>,
     food:Query<(&Transform,Entity),(With<Food>,Without<Juliana>)>,
-    mut julianas:Query<&mut Transform,With<Juliana>>
+    mut julianas:Query<(&mut Transform,&mut Juliana)>
     ) {
-    for mut juliana in julianas {
+    for (mut transform ,mut juliana) in julianas.iter_mut() {
+        let juliana_transform = transform.translation;
+        let mut julia = juliana;
         let nearest = food.iter().map(|(f,entity)| (f.translation,entity)).min_by(|a,b|{
-            a.0.distance_squared(juliana.translation)
-                .total_cmp(&b.0.distance_squared(juliana.translation))
+            a.0.distance_squared(juliana_transform)
+                .total_cmp(&b.0.distance_squared(juliana_transform))
         });
         let Some(target) = nearest else {continue};
         let (target_pos,entity_id) = target;
-        let mut direction = target_pos - juliana.translation;
+        let mut direction = target_pos - juliana_transform;
         direction.y = 0.0;
         let distance = direction.length();
         if distance > 0.1 {
-            let speed = JULIANA_SPEED * direction.normalize();
-            juliana.translation += speed * time.delta_secs();
+            let speed = julia.speed * direction.normalize();
+            transform.translation += speed * time.delta_secs();
         }
         else {
             // eat 
+            if julia.current_energy < julia.max_energy {
+                julia.current_energy += 40.0;
+            }
             commands.entity(entity_id).despawn();
         }
     }
@@ -57,4 +62,18 @@ pub fn spawn_food(
     }
 }
 
+pub fn starve_juliana(
+    time:Res<Time>,
+    mut commands:Commands,
+    mut julianas:Query<(Entity,&mut Juliana)>
+    ) {
+    for (entity,mut juliana) in julianas.iter_mut() {
+        juliana.current_energy -= 10.0 * time.delta_secs();
 
+        if juliana.current_energy <= 0.0 {
+            println!("JULIANA DESPAWNED");
+            commands.entity(entity).despawn();
+        }
+    } 
+
+}
