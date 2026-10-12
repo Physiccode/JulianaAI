@@ -7,6 +7,7 @@ pub fn move_juliana(
     mut commands:Commands,
     time:Res<Time>,
     food:Query<(&Transform,Entity),(With<Food>,Without<Juliana>)>,
+    asset_server:Res<AssetServer>,
     mut julianas:Query<(&mut Transform,&mut Juliana)>
     ) {
     for (mut transform ,mut juliana) in julianas.iter_mut() {
@@ -30,22 +31,23 @@ pub fn move_juliana(
             if julia.current_energy < julia.max_energy {
                 julia.current_energy += 40.0;
             }
-            else {
-                // spawn another juliana
+            /*
+                 // spawn another juliana
                 println!("Spawning juliana's child");
+                let pos = transform.translation;
                 commands.spawn((
                     WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
                     // TODO:alter the position in which juliana 2 will be spawned,but makes ure it
                     // cant spawn out of bounds,make juliana 2 spawn behind mother juliana
-                    Transform::from_xyz(juliana_transform.x,0.5,juliana_transform.z).with_scale(Vec3::splat(0.01)),
+                    Transform::from_xyz(pos.x,0.5,pos.z).with_scale(Vec3::splat(0.01)),
                     Juliana{
                         speed:JULIANA_SPEED,
                         current_energy:JDE,
                         max_energy:JME
-                }
-                ));
-            }
-            commands.entity(entity_id).despawn();
+                        },
+                    ));
+            */
+           commands.entity(entity_id).despawn();
         }
     }
 }
@@ -83,7 +85,7 @@ pub fn starve_juliana(
     mut julianas:Query<(Entity,&mut Juliana)>
     ) {
     for (entity,mut juliana) in julianas.iter_mut() {
-        juliana.current_energy -= 10.0 * time.delta_secs();
+        juliana.current_energy -= 5.0 * time.delta_secs();
 
         if juliana.current_energy <= 0.0 {
             println!("JULIANA DESPAWNED");
