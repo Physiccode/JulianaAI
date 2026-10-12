@@ -3,7 +3,7 @@ use bevy::prelude::*;
 pub const CAMERA_SENSIVITY:f32 = 0.003;
 pub const CAMERA_SPEED:f32 = 9.0;
 
-pub const JULIANA_SPEED:f32 = 2.0;
+pub const JULIANA_SPEED:f32 = 7.0;
 // JDE = JULIANA DEFAULT ENERGY
 pub const JDE:f32 = 100.0;
 // JME = JULIANA MAX ENERGY

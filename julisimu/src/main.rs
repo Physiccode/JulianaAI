@@ -16,7 +16,14 @@ fn main() {
             ..default()
         }))
         .add_systems(Startup,setup)
-        .add_systems(Update,(move_camera,spawn_food,move_juliana,draw_grid,starve_juliana))
+        .add_systems(Update,(
+                move_camera,
+                spawn_food,
+                move_juliana,
+                draw_grid,
+                starve_juliana,
+                change_food_color
+                ))
         .run();
 }
 

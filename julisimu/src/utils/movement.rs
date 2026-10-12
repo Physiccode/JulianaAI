@@ -30,6 +30,21 @@ pub fn move_juliana(
             if julia.current_energy < julia.max_energy {
                 julia.current_energy += 40.0;
             }
+            else {
+                // spawn another juliana
+                println!("Spawning juliana's child");
+                commands.spawn((
+                    WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
+                    // TODO:alter the position in which juliana 2 will be spawned,but makes ure it
+                    // cant spawn out of bounds,make juliana 2 spawn behind mother juliana
+                    Transform::from_xyz(juliana_transform.x,0.5,juliana_transform.z).with_scale(Vec3::splat(0.01)),
+                    Juliana{
+                        speed:JULIANA_SPEED,
+                        current_energy:JDE,
+                        max_energy:JME
+                }
+                ));
+            }
             commands.entity(entity_id).despawn();
         }
     }
@@ -76,4 +91,20 @@ pub fn starve_juliana(
         }
     } 
 
+}
+
+
+pub fn change_food_color (
+    time:Res<Time>,
+    mut food:Query<&MeshMaterial3d<StandardMaterial>,(With<Food>,Without<Juliana>)>,
+    mut materials:ResMut<Assets<StandardMaterial>>
+    ) {
+    let hue = (time.elapsed_secs() * 60.0) % 360.0;
+    let color = LinearRgba::from(Hsla::new(hue,1.0,0.5,1.0));
+    for material_handle in food.iter() {
+        if let Some(mut material) = materials.get_mut(material_handle) {
+            material.base_color = Color::from(color);
+            material.emissive = color * 10.0;
+        }
+    }
 }

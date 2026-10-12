@@ -3,7 +3,7 @@ use bevy::light::PointLight;
 use bevy::prelude::*;
 use bevy::window::{CursorGrabMode,CursorOptions};
 use super::data::*;
-
+use bevy::post_process::bloom::Bloom;
 
 pub fn setup(
     mut commands:Commands,
@@ -16,6 +16,8 @@ pub fn setup(
            Transform::from_xyz(0.0,2.0,4.0)
             .looking_at(Vec3::ZERO,Vec3::Y)
            ,
+           Camera::default(),
+           Bloom::NATURAL,
            MovableCamera
            ));
 
