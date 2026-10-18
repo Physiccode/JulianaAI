@@ -4,11 +4,13 @@ use bevy::prelude::*;
 use bevy::window::{CursorGrabMode,CursorOptions};
 use super::data::*;
 use bevy::post_process::bloom::Bloom;
+use rand::prelude::*;
 
 pub fn setup(
     mut commands:Commands,
     asset_server:Res<AssetServer>,
-    mut materials:ResMut<Assets<StandardMaterial>>
+    mut materials:ResMut<Assets<StandardMaterial>>,
+    mut meshes:ResMut<Assets<Mesh>>
     ) {
    //Spawn camera
    commands.spawn((
@@ -33,16 +35,30 @@ pub fn setup(
    */
 
    
-   // Spawn first juliana
-   commands.spawn((
-           WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
-           Transform::from_xyz(0.0,0.5,0.0).with_scale(Vec3::splat(0.01)),
-           Juliana{
-               speed:JULIANA_SPEED,
-               current_energy:JDE,
-               max_energy:JME
-           }
-           ));
+    // Spawn first juliana
+    commands.spawn((
+        WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
+        Transform::from_xyz(0.0,0.5,0.0).with_scale(Vec3::splat(0.01)),
+        Juliana{
+            speed:JULIANA_SPEED,
+            current_energy:JDE,
+            max_energy:JME
+    }
+    ));
+
+    let (x,z) = get_correct_pos();
+    // Spawn first predator 
+    commands.spawn((
+        Mesh3d(meshes.add(Capsule3d::default())),
+        Transform::from_xyz(x,0.0,z),
+        AntiJuliana{
+            current_energy:AJDE,
+            max_energy:AJME,
+            speed:AJS,
+            attack_power:AJDR,
+        }
+
+    ));
 }
 
 pub fn move_camera(
@@ -115,6 +131,20 @@ pub fn move_camera(
             CursorGrabMode::None=>CursorGrabMode::Locked,
             _=>CursorGrabMode::None
         }
+    }
+
+}
+
+
+fn get_correct_pos() ->(f32,f32){
+    let mut rng = rand::rng();
+    let x = rng.random_range(-HALF_SIZE..=HALF_SIZE);
+    let z = rng.random_range(-HALF_SIZE..=HALF_SIZE);
+    if x == 0.0 && z == 0.0 {
+        return get_correct_pos();
+    }
+    else {
+        return (x,z);
     }
 
 }

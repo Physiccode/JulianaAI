@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use super::data::*;
 use rand::prelude::*;
 use bevy::gltf::GltfAssetLabel;
+use std::collections::HashSet;
 
 pub fn move_juliana(
     mut commands:Commands,
@@ -10,10 +11,14 @@ pub fn move_juliana(
     asset_server:Res<AssetServer>,
     mut julianas:Query<(&mut Transform,&mut Juliana)>
     ) {
+    let mut eaten = HashSet::new();
+    
     for (mut transform ,mut juliana) in julianas.iter_mut() {
         let juliana_transform = transform.translation;
         let mut julia = juliana;
-        let nearest = food.iter().map(|(f,entity)| (f.translation,entity)).min_by(|a,b|{
+        let nearest = food.iter()
+            .filter(|(_,entity_id)| !eaten.contains(entity_id))
+            .map(|(f,entity)| (f.translation,entity)).min_by(|a,b|{
             a.0.distance_squared(juliana_transform)
                 .total_cmp(&b.0.distance_squared(juliana_transform))
         });
@@ -22,32 +27,38 @@ pub fn move_juliana(
         let mut direction = target_pos - juliana_transform;
         direction.y = 0.0;
         let distance = direction.length();
-        if distance > 0.1 {
+        if distance > EAT_DISTANCE {
             let speed = julia.speed * direction.normalize();
             transform.translation += speed * time.delta_secs();
         }
         else {
             // eat 
-            if julia.current_energy < julia.max_energy {
-                julia.current_energy += 40.0;
-            }
-            /*
-                 // spawn another juliana
-                println!("Spawning juliana's child");
-                let pos = transform.translation;
-                commands.spawn((
-                    WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
-                    // TODO:alter the position in which juliana 2 will be spawned,but makes ure it
-                    // cant spawn out of bounds,make juliana 2 spawn behind mother juliana
-                    Transform::from_xyz(pos.x,0.5,pos.z).with_scale(Vec3::splat(0.01)),
-                    Juliana{
-                        speed:JULIANA_SPEED,
-                        current_energy:JDE,
-                        max_energy:JME
+            if eaten.insert(entity_id) {
+
+                commands.entity(entity_id).despawn();
+
+                if julia.current_energy < julia.max_energy {
+                    julia.current_energy += 40.0;
+                }
+                else  { // spawn another juliana 
+                    // Lose energy during birth:
+                    julia.current_energy -= 80.0;
+                    println!("Spawning juliana's child");
+                    let pos = transform.translation;
+                    // potentially reduce juliana's children's speed
+                    let mut rng = rand::rng();
+                    let speed_reducer = rng.random_range(0.0..=0.5);
+                    commands.spawn((
+                        WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
+                        Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,0.5,pos.z -2.0).with_scale(Vec3::splat(0.01)),
+                        Juliana{
+                            speed:JULIANA_SPEED - speed_reducer,
+                            current_energy:JDE,
+                            max_energy:JME
                         },
                     ));
-            */
-           commands.entity(entity_id).despawn();
+                }
+            }
         }
     }
 }
@@ -85,7 +96,7 @@ pub fn starve_juliana(
     mut julianas:Query<(Entity,&mut Juliana)>
     ) {
     for (entity,mut juliana) in julianas.iter_mut() {
-        juliana.current_energy -= 5.0 * time.delta_secs();
+        juliana.current_energy -= STARVATION_RATE * time.delta_secs();
 
         if juliana.current_energy <= 0.0 {
             println!("JULIANA DESPAWNED");
@@ -110,3 +121,6 @@ pub fn change_food_color (
         }
     }
 }
+
+
+pub fn move_predator(){}

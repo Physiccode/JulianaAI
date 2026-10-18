@@ -6,6 +6,7 @@ mod utils;
 use utils::camera::{setup,move_camera};
 use utils::movement::*;
 
+//TODO:ADD AN ENTITY COUNTER AND A JULIANA COUNTER AT THE RIGHT TOP PART OF THE SCREEN
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin{
