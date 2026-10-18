@@ -126,7 +126,7 @@ pub fn change_food_color (
 pub fn move_predator(
     mut commands:Commands,
     time:Res<Time>,
-    julianas:Query<(Transform,Entity,mut Juliana)>,
+    julianas:Query<(Transform,Entity,mut Juliana),With<Juliana>>,
     mut predators:Query<&mut Transform,mut AntiJuliana>
     ){
     let eaten = HashSet::new();
@@ -135,7 +135,7 @@ pub fn move_predator(
         let julia_pos = transform.translation;
         let julia = anti_juliana;
         let nearest = julianas.iter()
-            ,filter(|_,entity_id| !eaten.contains(entity_id))
+            .filter(|_,entity_id| !eaten.contains(entity_id))
             .map(|aj_pos,entity|(aj_pos.translation)).min_by(|a,b|{
             a.0.distance_squared(julia_pos)
                 .total_cmp(&b.0.distance_squared(julia_pos))
