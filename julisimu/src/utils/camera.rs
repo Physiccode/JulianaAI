@@ -50,7 +50,12 @@ pub fn setup(
     // Spawn first predator 
     commands.spawn((
         Mesh3d(meshes.add(Capsule3d::default())),
-        Transform::from_xyz(x,0.0,z),
+        MeshMaterial3d(materials.add(StandardMaterial{
+            base_color:Color::from(bevy::color::palettes::tailwind::FUCHSIA_950),
+            unlit:false,
+            ..default()
+        })),
+        Transform::from_xyz(x,1.0,z),
         AntiJuliana{
             current_energy:AJDE,
             max_energy:AJME,

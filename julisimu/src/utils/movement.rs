@@ -123,4 +123,100 @@ pub fn change_food_color (
 }
 
 
-pub fn move_predator(){}
+pub fn move_predator(
+    mut commands:Commands,
+    time:Res<Time>,
+    julianas:Query<(Transform,Entity,mut Juliana)>,
+    mut predators:Query<&mut Transform,mut AntiJuliana>
+    ){
+    let eaten = HashSet::new();
+    
+    for (mut transform,mut anti_juliana) in predators.iter_mut() {
+        let julia_pos = transform.translation;
+        let julia = anti_juliana;
+        let nearest = julianas.iter()
+            ,filter(|_,entity_id| !eaten.contains(entity_id))
+            .map(|aj_pos,entity|(aj_pos.translation)).min_by(|a,b|{
+            a.0.distance_squared(julia_pos)
+                .total_cmp(&b.0.distance_squared(julia_pos))
+            });
+        let Some(target) = nearest else {continue};
+        let (target_pos,entity_id,juliana) = target;
+        let mut direction = target_pos - julia_pos;
+        let distance = direction.length();
+        if distance > EAT_DISTANCE {
+            let speed = anti_juliana.speed * direction.normalize();
+            transform.translation += speed * time.delta_secs();
+        }
+        else {
+            if juliana.current_energy > AJDR {
+                juliana.current_energy -= AJDR;
+                if julia.current_energy < AJME {
+                    julia.current_energy += 10.0;
+                }
+                else {
+                    julia.current_energy -= 100.0;
+                    println!("Spawning anti-juliana's child");
+                    let pos = transform.translation;
+                    let mut rng = rng::rng();
+                    let speed_reducer = random_rnage(0.0..=0.5);
+                    commands.spawn((
+                            Mesh3d(meshes.add(Capsule3d::default())),
+                            MeshMaterial3d(materials.add(StandardMaterial{
+                                base_color:Color::from(bevy::color::palettes::tailwind::FUCHSIA_950),
+                                unlit:false,
+                                ..default()
+                            })),
+                            Transform::from_xyz(x+EAT_DISTANCE+1.0,1.0,z-2.0),
+                            AntiJuliana{
+                                current_energy:AJDE,
+                                max_energy:AJME,
+                                speed:AJS-speed_reducer,
+                                attack_power:AJDR,
+                            }
+
+                        ));
+
+                }
+            }
+            else {
+                if eaten.insert(entity_id) {
+
+                    commands.entity(entity_id).despawn();
+
+                    if julia.current_energy < julia.max_energy {
+                        julia.current_energy += 10.0;     
+                    }
+                    else {
+                        // Spawn julia baby
+                        julia.current_energy -= 100.0;
+                        println!("Spawning anti-juliana's child");
+                        let pos = transform.translation;
+                        let mut rng = rng::rng();
+                        let speed_reducer = random_rnage(0.0..=0.5);
+                        commands.spawn((
+                                Mesh3d(meshes.add(Capsule3d::default())),
+                                MeshMaterial3d(materials.add(StandardMaterial{
+                                    base_color:Color::from(bevy::color::palettes::tailwind::FUCHSIA_950),
+                                    unlit:false,
+                                    ..default()
+                                })),
+                                Transform::from_xyz(x+EAT_DISTANCE+1.0,1.0,z-2.0),
+                                AntiJuliana{
+                                    current_energy:AJDE,
+                                    max_energy:AJME,
+                                    speed:AJS-speed_reducer,
+                                    attack_power:AJDR,
+                                }
+
+                        ));
+
+
+                    }
+
+                }
+            }
+            
+        }
+    }
+}
