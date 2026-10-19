@@ -126,19 +126,19 @@ pub fn change_food_color (
 pub fn move_predator(
     mut commands:Commands,
     time:Res<Time>,
-    mut julianas:Query<(&Transform,Entity,&mut Juliana),With<Juliana>>,
-    mut predators:Query<(&mut Transform,&mut AntiJuliana)>,
+    mut julianas:Query<(&Transform,Entity,&mut Juliana),(With<Juliana>,Without<AntiJuliana>)>,
+    mut predators:Query<(&mut Transform,&mut AntiJuliana),(With<AntiJuliana>,Without<Juliana>)>,
     mut meshes:ResMut<Assets<Mesh>>,
     mut materials:ResMut<Assets<StandardMaterial>>
     ){
-    let eaten = HashSet::new();
+    let mut eaten = HashSet::new();
     
     for (mut transform,mut anti_juliana) in predators.iter_mut() {
         let predator_pos = transform.translation;
 
         let nearest = julianas.iter_mut()
-            .filter(|_,entity_id,_| !eaten.contains(entity_id))
-            .map(|aj_pos,entity,j|(aj_pos.translation,entity,j)).min_by(|a,b|{
+            .filter(|(_,entity_id,_)| !eaten.contains(entity_id))
+            .map(|(aj_pos,entity,j)|(aj_pos.translation,entity,j)).min_by(|a,b|{
             a.0.distance_squared(predator_pos)
                 .total_cmp(&b.0.distance_squared(predator_pos))
             });
@@ -158,11 +158,11 @@ pub fn move_predator(
                 }
                 else {
                     // Spawn baby anti-juliana
-                    julia.current_energy -= 100.0;
+                    anti_juliana.current_energy -= 100.0;
                     println!("Spawning anti-juliana's child");
                     let pos = transform.translation;
-                    let mut rng = rng::rng();
-                    let speed_reducer = random_rnage(0.0..=0.5);
+                    let mut rng = rand::rng();
+                    let speed_reducer = rng.random_range(0.0..=0.5);
                     commands.spawn((
                             Mesh3d(meshes.add(Capsule3d::default())),
                             MeshMaterial3d(materials.add(StandardMaterial{
@@ -196,8 +196,8 @@ pub fn move_predator(
                         anti_juliana.current_energy -= 100.0;
                         println!("Spawning anti-juliana's child");
                         let pos = transform.translation;
-                        let mut rng = rng::rng();
-                        let speed_reducer = random_range(0.0..=0.5);
+                        let mut rng = rand::rng();
+                        let speed_reducer = rng.random_range(0.0..=0.5);
                         commands.spawn((
                                 Mesh3d(meshes.add(Capsule3d::default())),
                                 MeshMaterial3d(materials.add(StandardMaterial{
@@ -205,7 +205,7 @@ pub fn move_predator(
                                     unlit:false,
                                     ..default()
                                 })),
-                                Transform::from_xyz(x+EAT_DISTANCE+1.0,1.0,z-2.0),
+                                Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,1.0,pos.z-2.0),
                                 AntiJuliana{
                                     current_energy:AJDE,
                                     max_energy:AJME,
