@@ -18,10 +18,11 @@ fn main() {
         }))
         .add_systems(Startup,setup)
         .add_systems(Update,(
+                draw_grid,
                 move_camera,
                 spawn_food,
                 move_juliana,
-                draw_grid,
+                move_predator,
                 starve_juliana,
                 change_food_color
                 ))
