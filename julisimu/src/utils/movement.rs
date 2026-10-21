@@ -48,8 +48,11 @@ pub fn move_juliana(
             if final_displacement != Vec3::ZERO {
                 let final_dir = final_displacement.normalize();
                 transform.translation += final_dir * julia.speed * time.delta_secs(); 
+
                 transform.translation.x = transform.translation.x.clamp(-HALF_SIZE,HALF_SIZE);
                 transform.translation.z = transform.translation.z.clamp(-HALF_SIZE,HALF_SIZE);
+
+
             }
 
         }
@@ -251,4 +254,32 @@ pub fn move_predator(
             
         }
     }
+}
+
+pub fn evolution_manager(
+    mut commands:Commands,
+    asset_server:Res<AssetServer>,
+    julianas:Query<(),With<Juliana>>
+    ) {
+    if julianas.is_empty() {
+        println!("Extinsion occured.Spawning new generation");
+        for i in 0..5 {
+            let mut rng = rand::rng();
+            let x = rng.random_range(-HALF_SIZE..=HALF_SIZE);
+            let z = rng.random_range(-HALF_SIZE..=HALF_SIZE);
+            commands.spawn((
+                    WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
+                    Transform::from_xyz(x, 0.5, z).with_scale(Vec3::splat(0.01)),
+                    Juliana {
+                        speed: JULIANA_SPEED,
+                        current_energy: JDE,
+                        max_energy: JME,
+                    },
+                    // Gives each new starter a unique set of randomized preference weights
+                    Brain::default(), 
+                ));
+        }
+
+    }
+    
 }

@@ -4,14 +4,14 @@ use rand::prelude::*;
 pub const CAMERA_SENSIVITY:f32 = 0.003;
 pub const CAMERA_SPEED:f32 = 9.0;
 
-pub const JULIANA_SPEED:f32 = 12.0;
+pub const JULIANA_SPEED:f32 = 8.0;
 // JDE = JULIANA DEFAULT ENERGY
 pub const JDE:f32 = 90.0;
 // JME = JULIANA MAX ENERGY
 pub const JME:f32 = 300.0;
 
 pub const EAT_DISTANCE:f32 = 0.6;
-pub const MAX_FOOD:usize = 3;
+pub const MAX_FOOD:usize = 20;
 // I'll see hwat happens if i have f32,then ill maybe change this to i32
 pub const HALF_SIZE:f32 = 19.0;
 pub const STARVATION_RATE:f32 = 5.0; // 5 hp/frame

@@ -24,7 +24,8 @@ fn main() {
                 move_juliana,
                 move_predator,
                 starve_juliana,
-                change_food_color
+                change_food_color,
+                evolution_manager
                 ))
         .run();
 }
