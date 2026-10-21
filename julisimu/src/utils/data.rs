@@ -4,7 +4,7 @@ use rand::prelude::*;
 pub const CAMERA_SENSIVITY:f32 = 0.003;
 pub const CAMERA_SPEED:f32 = 9.0;
 
-pub const JULIANA_SPEED:f32 = 8.0;
+pub const JULIANA_SPEED:f32 = 12.0;
 // JDE = JULIANA DEFAULT ENERGY
 pub const JDE:f32 = 90.0;
 // JME = JULIANA MAX ENERGY
