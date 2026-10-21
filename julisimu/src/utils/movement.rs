@@ -9,27 +9,46 @@ pub fn move_juliana(
     time:Res<Time>,
     food:Query<(&Transform,Entity),(With<Food>,Without<Juliana>)>,
     asset_server:Res<AssetServer>,
-    mut julianas:Query<(&mut Transform,&mut Juliana)>
+    mut julianas:Query<(&mut Transform,&mut Juliana,&Brain)>
+    predators:Query<&Transform,With<AntiJuliana>>
     ) {
     let mut eaten = HashSet::new();
     
-    for (mut transform ,mut juliana) in julianas.iter_mut() {
+    for (mut transform ,mut juliana,brain) in julianas.iter_mut() {
+
         let juliana_transform = transform.translation;
         let mut julia = juliana;
-        let nearest = food.iter()
+
+        let nearest_food = food.iter()
             .filter(|(_,entity_id)| !eaten.contains(entity_id))
             .map(|(f,entity)| (f.translation,entity)).min_by(|a,b|{
             a.0.distance_squared(juliana_transform)
                 .total_cmp(&b.0.distance_squared(juliana_transform))
         });
-        let Some(target) = nearest else {continue};
-        let (target_pos,entity_id) = target;
-        let mut direction = target_pos - juliana_transform;
-        direction.y = 0.0;
-        let distance = direction.length();
-        if distance > EAT_DISTANCE {
-            let speed = julia.speed * direction.normalize();
-            transform.translation += speed * time.delta_secs();
+        let Some(food_target) = nearest_food else {continue};
+        let (food_target_pos,entity_id) = food_target;
+
+        let food_direction = (food_target_pos - juliana_transform).normalize_or_zero().unwrap_or(Vec3::ZERO);
+        let food_distance = food_direction.length();
+
+        let nearest_aj = predators.iter().min_by(|a,b|{
+            a.translation.distance_squared(juliana_transform)
+                .total_cmp(&b.translation.distance_sqiared(juliana_transform))
+        });
+
+        let Some(aj_pos) = nearest_aj else {continue};
+        let aj_dir = (aj_pos - juliana_transform).normalize_or_zero().unwrap_or(Vec3::ZERO);
+        // multiply directions by genetic weight
+        let final_x = (food_direction.x * brain.weights[0] + aj_dir.x * brain.weights[2]);
+        let final_z = (food_direction.z * brain.weights[1] + aj_dir.x * brain.weights[3]);
+        let final_displacement = Vec3::new(final_x,0.0,final_z);
+
+        if food_distance > EAT_DISTANCE {
+            if final_displacemenet != Vec3::ZERO {
+                let final_dir = final_dir.normalize();
+                transform.translation += final_dir * julia.speed * time.delta_secs(); 
+            }
+
         }
         else {
             // eat 
@@ -46,6 +65,11 @@ pub fn move_juliana(
                     println!("Spawning juliana's child");
                     let pos = transform.translation;
                     // potentially reduce juliana's children's speed
+                    let mut baby_brain = brain.clone();
+                    for i in 0..4 {
+                        baby_brain.weights[i] += rng.random_range(-0.2..=0.2);
+                        baby_brain.weights = baby_brain.weights[i].clamp(-2.0,2.0);
+                    }
                     let mut rng = rand::rng();
                     let speed_reducer = rng.random_range(0.0..=0.5);
                     commands.spawn((

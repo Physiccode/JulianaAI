@@ -1,9 +1,10 @@
 use bevy::prelude::*;
+use rand::prelude::*;
 
 pub const CAMERA_SENSIVITY:f32 = 0.003;
 pub const CAMERA_SPEED:f32 = 9.0;
 
-pub const JULIANA_SPEED:f32 = 12.0;
+pub const JULIANA_SPEED:f32 = 8.0;
 // JDE = JULIANA DEFAULT ENERGY
 pub const JDE:f32 = 90.0;
 // JME = JULIANA MAX ENERGY
@@ -47,3 +48,28 @@ pub struct AntiJuliana {
     pub attack_power:f32,
 }
 
+#[derive(Component,Clone)]
+pub struct Brain{
+    /*Weights:
+     *0:How much i care about food x 
+    1:How much i care about food z 
+    2:How much i care about predator's x
+    3:How much i care about predator z
+     * */
+    pub weights:[f32;4],
+}
+
+impl Default for Brain {
+    fn default()->Self {
+        //Random brain for the first ancestor
+        let mut rng = rand::rng();
+        Self {
+            weights: [
+                rng.random_range(-1.0..=1.0), // Food's x preference
+                rng.random_range(-1.0..=1.0), // Food's z preference
+                rng.random_range(-1.0..=1.0), // Predator's x avoidance
+                rng.random_range(-1.0..=1.0), // Predator's z avoidance
+            ]
+        }
+    }
+}

@@ -43,7 +43,8 @@ pub fn setup(
             speed:JULIANA_SPEED,
             current_energy:JDE,
             max_energy:JME
-    }
+        },
+        Brain::default(),
     ));
 
     let (x,z) = get_correct_pos();
