@@ -11,7 +11,7 @@ pub const JDE:f32 = 90.0;
 pub const JME:f32 = 300.0;
 
 pub const EAT_DISTANCE:f32 = 0.6;
-pub const MAX_FOOD:usize = 20;
+pub const MAX_FOOD:usize = 10;
 // I'll see hwat happens if i have f32,then ill maybe change this to i32
 pub const HALF_SIZE:f32 = 19.0;
 pub const STARVATION_RATE:f32 = 5.0; // 5 hp/frame
@@ -86,10 +86,16 @@ impl Default for Brain {
         let mut rng = rand::rng();
         Self {
             weights: [
+                /*
                 rng.random_range(-1.0..=1.0), // Food's x preference
                 rng.random_range(-1.0..=1.0), // Food's z preference
                 rng.random_range(-1.0..=1.0), // Predator's x avoidance
                 rng.random_range(-1.0..=1.0), // Predator's z avoidance
+                                              // */
+                1.0334368,
+                0.9729434,
+                0.01086089,
+                -0.2569523
             ],
         }
     }

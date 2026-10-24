@@ -281,7 +281,7 @@ pub fn evolution_manager(
             let z = rng.random_range(-HALF_SIZE..=HALF_SIZE);
             let mut brain = best_brain.brain;
             for weight in brain.weights.iter_mut() {
-                let mutation = rng.random_range(-0.2..=0.2);
+                let mutation = rng.random_range(-2.0..=2.0);
                 *weight = (*weight+mutation).clamp(-1.0,1.0);
             }
             commands.spawn((
