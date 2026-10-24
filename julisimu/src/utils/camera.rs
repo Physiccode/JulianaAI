@@ -39,11 +39,7 @@ pub fn setup(
     commands.spawn((
         WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
         Transform::from_xyz(0.0,0.5,0.0).with_scale(Vec3::splat(0.01)),
-        Juliana{
-            speed:JULIANA_SPEED,
-            current_energy:JDE,
-            max_energy:JME
-        },
+        Juliana::default(),
         Brain::default(),
     ));
 
@@ -57,13 +53,7 @@ pub fn setup(
             ..default()
         })),
         Transform::from_xyz(x,1.0,z),
-        AntiJuliana{
-            current_energy:AJDE,
-            max_energy:AJME,
-            speed:AJS,
-            attack_power:AJDR,
-        }
-
+        AntiJuliana::default(),
     ));
 }
 

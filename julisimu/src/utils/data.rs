@@ -32,6 +32,17 @@ pub struct Juliana{
     pub speed:f32,
     pub current_energy:f32,
     pub max_energy:f32,
+    pub eaten_food:u8,
+}
+impl Default for Juliana {
+    pub default()->Self {
+        Self {
+            speed:JULIANA_SPEED,
+            current_energy:JDE,
+            max_energy:JME,
+            eaten_food:0,
+        }
+    }
 }
 
 #[derive(Component)]
@@ -47,8 +58,18 @@ pub struct AntiJuliana {
     pub speed:f32,
     pub attack_power:f32,
 }
+impl Default for AntiJuliana {
+    pub default()->Self {
+        Self{
+            current_energy:AJDE,
+            max_energy:AJME,
+            speed:AJS,
+            attack_power:AJDR,
+        }
+    }
+}
 
-#[derive(Component,Clone)]
+#[derive(Resource,Component,Clone)]
 pub struct Brain{
     /*Weights:
      *0:How much i care about food x 
@@ -69,7 +90,13 @@ impl Default for Brain {
                 rng.random_range(-1.0..=1.0), // Food's z preference
                 rng.random_range(-1.0..=1.0), // Predator's x avoidance
                 rng.random_range(-1.0..=1.0), // Predator's z avoidance
-            ]
+            ],
+            sucess_unit:0,
         }
     }
+}
+
+#[derive(Resource,Default)]
+pub struct BestSucess {
+    best_sucess:u8,
 }

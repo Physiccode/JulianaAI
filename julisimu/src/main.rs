@@ -27,6 +27,8 @@ fn main() {
                 change_food_color,
                 evolution_manager
                 ))
+        .insert_resource(Brain::default())
+        .insert_resource(BestSucess::default())
         .run();
 }
 

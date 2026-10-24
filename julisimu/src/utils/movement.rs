@@ -40,8 +40,8 @@ pub fn move_juliana(
         let Some(aj_pos) = nearest_aj else {continue};
         let aj_dir = (aj_pos.translation - juliana_transform).normalize_or_zero();
         // multiply directions by genetic weight
-        let final_x = (food_direction.x * brain.weights[0] + aj_dir.x * brain.weights[2]);
-        let final_z = (food_direction.z * brain.weights[1] + aj_dir.z * brain.weights[3]);
+        let final_x = food_direction.x * brain.weights[0] + aj_dir.x * brain.weights[2];
+        let final_z = food_direction.z * brain.weights[1] + aj_dir.z * brain.weights[3];
         let final_displacement = Vec3::new(final_x,0.0,final_z);
 
         if food_distance > EAT_DISTANCE {
@@ -61,6 +61,7 @@ pub fn move_juliana(
             if eaten.insert(entity_id) {
 
                 commands.entity(entity_id).despawn();
+                julia.eaten_food +=1;
 
                 if julia.current_energy < julia.max_energy {
                     julia.current_energy += 40.0;
@@ -157,10 +158,12 @@ pub fn change_food_color (
 pub fn move_predator(
     mut commands:Commands,
     time:Res<Time>,
-    mut julianas:Query<(&Transform,Entity,&mut Juliana),(With<Juliana>,Without<AntiJuliana>)>,
+    mut julianas:Query<(&Transform,Entity,&mut Juliana,&Brain),(With<Juliana>,Without<AntiJuliana>)>,
     mut predators:Query<(&mut Transform,&mut AntiJuliana),(With<AntiJuliana>,Without<Juliana>)>,
     mut meshes:ResMut<Assets<Mesh>>,
-    mut materials:ResMut<Assets<StandardMaterial>>
+    mut materials:ResMut<Assets<StandardMaterial>>,
+    mut best_brain:ResMut<BestBrain>,
+    mut best_sucess:ResMut<BestSucess>
     ){
     let mut eaten = HashSet::new();
     
@@ -168,13 +171,13 @@ pub fn move_predator(
         let predator_pos = transform.translation;
 
         let nearest = julianas.iter_mut()
-            .filter(|(_,entity_id,_)| !eaten.contains(entity_id))
-            .map(|(aj_pos,entity,j)|(aj_pos.translation,entity,j)).min_by(|a,b|{
+            .filter(|(_,entity_id,_,_)| !eaten.contains(entity_id))
+            .map(|(aj_pos,entity,j,brain)|(aj_pos.translation,entity,j,brain)).min_by(|a,b|{
             a.0.distance_squared(predator_pos)
                 .total_cmp(&b.0.distance_squared(predator_pos))
             });
         let Some(target) = nearest else {continue};
-        let (target_pos,entity_id,mut target_juliana) = target;
+        let (target_pos,entity_id,mut target_juliana,target_brain) = target;
         let mut direction = target_pos - predator_pos;
         let distance = direction.length();
         if distance > EAT_DISTANCE {
@@ -217,6 +220,12 @@ pub fn move_predator(
                 // eat and kill juliana
                 if eaten.insert(entity_id) {
 
+                    // Before killing juliana,print her brain component for diagnostic
+                    println!("Juliana's brain:{:?}",target_brain.weights);
+                    if target_juliana.eaten_food > best_sucess {
+                        best_sucess = target_juliana.eaten_food;
+                        best_brain = target_brain.clone();
+                    }
                     commands.entity(entity_id).despawn();
 
                     if anti_juliana.current_energy < anti_juliana.max_energy {
@@ -259,11 +268,12 @@ pub fn move_predator(
 pub fn evolution_manager(
     mut commands:Commands,
     asset_server:Res<AssetServer>,
-    julianas:Query<(),With<Juliana>>
+    julianas:Query<(),With<Juliana>>,
+    best_brain:Res<BestBrain>
     ) {
     if julianas.is_empty() {
         println!("Extinsion occured.Spawning new generation");
-        for i in 0..5 {
+        for _ in 0..5 {
             let mut rng = rand::rng();
             let x = rng.random_range(-HALF_SIZE..=HALF_SIZE);
             let z = rng.random_range(-HALF_SIZE..=HALF_SIZE);
@@ -276,7 +286,8 @@ pub fn evolution_manager(
                         max_energy: JME,
                     },
                     // Gives each new starter a unique set of randomized preference weights
-                    Brain::default(), 
+                    // TODO: CHANGE THE BRAIN'S NEURAL WEIGHTS SLIGHTLY TO ADD GENETIC VARIATION
+                    best_brain,
                 ));
         }
 
