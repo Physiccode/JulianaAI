@@ -23,17 +23,35 @@ pub fn setup(
            MovableCamera
            ));
 
-   /*
-   // Spawn light 
-   commands.spawn((PointLight{
-       intensity:500_000.0,
-       shadow_maps_enabled:true,
-       ..default()},
-       Transform::from_xyz(0.0,0.0,0.0),
-   ));
-   
-   */
+   // Spawn terrain:
+   commands.spawn((
+           Mesh3d(meshes.add(Plane3d::default().mesh().size(100.0,100.1))),
+           MeshMaterial3d(materials.add(StandardMaterial{
+               base_color:Color::from(bevy::color::palettes::tailwind::STONE_500),
+               perceptual_roughness:0.85,
+               metallic:0.05,
+               reflectance:0.2,
+               ..default()
+           })),
+           Transform::from_xyz(0.0,0.0,0.0),
+           ));
 
+   // Add sunlight:
+   commands.spawn((
+           DirectionalLight{
+               illuminance:5000.0,
+               shadow_maps_enabled:true,
+               ..default()
+           },
+           Transform::from_xyz(15.0,30.0,15.0).looking_at(Vec3::ZERO,Vec3::Y),
+
+           ));
+   // Add sky ambient light
+   commands.insert_resource(GlobalAmbientLight{
+       color:Color::from(bevy::color::palettes::tailwind::AMBER_50),
+       brightness:150.0,
+       ..default()
+   });
    
     // Spawn first juliana
     commands.spawn((
@@ -52,7 +70,7 @@ pub fn setup(
             unlit:false,
             ..default()
         })),
-        Transform::from_xyz(x,1.0,z),
+        Transform::from_xyz(x,1.5,z),
         AntiJuliana::default(),
     ));
 }

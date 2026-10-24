@@ -45,10 +45,12 @@ fn print_diagnostic(diagnostics:Res<DiagnosticsStore>) {
 }
 
 fn draw_grid(mut gizmos:Gizmos) {
+    /*
    let color = Color::srgb(0.35,0.35,0.35); 
    for i in -20..=20 {
        let p = i as f32;
        gizmos.line(Vec3::new(p,0.0,-20.0),Vec3::new(p,0.0,20.0),color);
        gizmos.line(Vec3::new(-20.0,0.0,p),Vec3::new(20.0,0.0,p),color);
    }
+    */
 }
