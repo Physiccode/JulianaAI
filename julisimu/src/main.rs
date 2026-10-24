@@ -5,6 +5,8 @@ use bevy::{
 mod utils;
 use utils::camera::{setup,move_camera};
 use utils::movement::*;
+use crate::utils::data::BestSucess;
+use crate::utils::data::BestBrain;
 
 //TODO:ADD AN ENTITY COUNTER AND A JULIANA COUNTER AT THE RIGHT TOP PART OF THE SCREEN
 fn main() {
@@ -27,7 +29,7 @@ fn main() {
                 change_food_color,
                 evolution_manager
                 ))
-        .insert_resource(Brain::default())
+        .insert_resource(BestBrain::default())
         .insert_resource(BestSucess::default())
         .run();
 }

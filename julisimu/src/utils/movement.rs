@@ -85,7 +85,8 @@ pub fn move_juliana(
                         Juliana{
                             speed:JULIANA_SPEED - speed_reducer,
                             current_energy:JDE,
-                            max_energy:JME
+                            max_energy:JME,
+                            eaten_food:0,
                         },
                         baby_brain,
                     ));
@@ -222,9 +223,10 @@ pub fn move_predator(
 
                     // Before killing juliana,print her brain component for diagnostic
                     println!("Juliana's brain:{:?}",target_brain.weights);
-                    if target_juliana.eaten_food > best_sucess {
-                        best_sucess = target_juliana.eaten_food;
-                        best_brain = target_brain.clone();
+                    if target_juliana.eaten_food > best_sucess.count {
+                        best_sucess.count = target_juliana.eaten_food;
+                        best_brain.brain = *target_brain;
+                        println!("Best brain until now:{:?},sucess count:{}",best_brain.brain,best_sucess.count);
                     }
                     commands.entity(entity_id).despawn();
 
@@ -277,6 +279,11 @@ pub fn evolution_manager(
             let mut rng = rand::rng();
             let x = rng.random_range(-HALF_SIZE..=HALF_SIZE);
             let z = rng.random_range(-HALF_SIZE..=HALF_SIZE);
+            let mut brain = best_brain.brain;
+            for weight in brain.weights.iter_mut() {
+                let mutation = rng.random_range(-0.2..=0.2);
+                *weight = (*weight+mutation).clamp(-1.0,1.0);
+            }
             commands.spawn((
                     WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
                     Transform::from_xyz(x, 0.5, z).with_scale(Vec3::splat(0.01)),
@@ -284,10 +291,10 @@ pub fn evolution_manager(
                         speed: JULIANA_SPEED,
                         current_energy: JDE,
                         max_energy: JME,
+                        eaten_food:0
                     },
                     // Gives each new starter a unique set of randomized preference weights
-                    // TODO: CHANGE THE BRAIN'S NEURAL WEIGHTS SLIGHTLY TO ADD GENETIC VARIATION
-                    best_brain,
+                    brain,
                 ));
         }
 
