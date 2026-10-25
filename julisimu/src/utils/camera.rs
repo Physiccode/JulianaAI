@@ -11,6 +11,11 @@ pub fn setup(
     mut materials:ResMut<Assets<StandardMaterial>>,
     mut meshes:ResMut<Assets<Mesh>>
     ) {
+
+    //Load forest tree pack
+    commands.insert_resource(ForestPack{
+        container:asset_server.load("forest_pack.glb"),
+    });
    //Spawn camera
    commands.spawn((
            Camera3d::default(),

@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::gltf::Gltf;
 
 pub const CAMERA_SENSIVITY:f32 = 0.003;
 pub const CAMERA_SPEED:f32 = 9.0;
@@ -107,4 +108,27 @@ pub struct BestBrain {
 #[derive(Resource,Default)]
 pub struct BestSucess {
     pub count:u8,
+}
+
+#[derive(Component,Clone,Debug)]
+// Larger head bone length = allows eating from a larger distance but causes more weight so -
+// more energy spent
+// Larger leg bone length = allows running faster,but burns more energy
+pub struct SkeletalDNA {
+    pub leg_bone_length:f32,
+    pub head_bone_length:f32,
+}
+
+impl Default for SkeletalDNA {
+    fn default()->Self{
+        Self {
+            leg_bone_length:1.0,
+            head_bone_length:1.0,
+        }
+    }
+}
+
+#[derive(Resource,Default)]
+pub struct ForestPack {
+    pub container:Handle<Gltf>
 }

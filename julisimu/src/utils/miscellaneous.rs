@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use rand::prelude::*;
-use crate::utils::data::*;
+use super::data::*;
 
 pub fn evolution_manager(
     mut commands:Commands,
