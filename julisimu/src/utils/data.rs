@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-use rand::prelude::*;
 
 pub const CAMERA_SENSIVITY:f32 = 0.003;
 pub const CAMERA_SPEED:f32 = 9.0;
@@ -83,7 +82,7 @@ pub struct Brain{
 impl Default for Brain {
     fn default()->Self {
         //Random brain for the first ancestor
-        let mut rng = rand::rng();
+        //let rng = rand::rng();
         Self {
             weights: [
                 /*
