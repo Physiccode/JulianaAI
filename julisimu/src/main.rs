@@ -5,6 +5,7 @@ use bevy::{
 mod utils;
 use utils::camera::{setup,move_camera};
 use utils::movement::*;
+use utils::terrain::*;
 use crate::utils::data::BestSucess;
 use crate::utils::data::BestBrain;
 
@@ -27,7 +28,8 @@ fn main() {
                 move_predator,
                 starve_juliana,
                 change_food_color,
-                evolution_manager
+                evolution_manager,
+                ground
                 ))
         .insert_resource(BestBrain::default())
         .insert_resource(BestSucess::default())

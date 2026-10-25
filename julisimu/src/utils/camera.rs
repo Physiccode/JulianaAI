@@ -23,19 +23,6 @@ pub fn setup(
            MovableCamera
            ));
 
-   // Spawn terrain:
-   commands.spawn((
-           Mesh3d(meshes.add(Plane3d::default().mesh().size(100.0,100.1))),
-           MeshMaterial3d(materials.add(StandardMaterial{
-               base_color:Color::from(bevy::color::palettes::tailwind::STONE_500),
-               perceptual_roughness:0.85,
-               metallic:0.05,
-               reflectance:0.2,
-               ..default()
-           })),
-           Transform::from_xyz(0.0,0.0,0.0),
-           ));
-
    // Add sunlight:
    commands.spawn((
            DirectionalLight{
