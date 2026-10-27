@@ -69,3 +69,31 @@ pub fn ground_entities(
     }
     */
 }
+
+pub fn setup_background(
+    mut commands:Commands,
+    asset_server:Res<AssetServer>,
+    ) {
+ // Add sunlight:
+   commands.spawn((
+           DirectionalLight{
+               illuminance:5000.0,
+               shadow_maps_enabled:true,
+               ..default()
+           },
+           Transform::from_xyz(15.0,30.0,15.0).looking_at(Vec3::ZERO,Vec3::Y),
+
+           ));
+   // Add sky ambient light
+   commands.insert_resource(GlobalAmbientLight{
+       color:Color::from(bevy::color::palettes::tailwind::AMBER_50),
+       brightness:150.0,
+       ..default()
+   });
+
+  //Load forest tree pack
+    commands.insert_resource(ForestPack{
+        container:asset_server.load("forest_pack.glb"),
+    });
+
+}

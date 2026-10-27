@@ -132,3 +132,6 @@ impl Default for SkeletalDNA {
 pub struct ForestPack {
     pub container:Handle<Gltf>
 }
+
+#[derive(Component)]
+pub struct SimulationText;

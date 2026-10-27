@@ -2,11 +2,13 @@ use bevy::{
     prelude::*,
     diagnostic::{FrameTimeDiagnosticsPlugin,DiagnosticsStore},
 };
+//TODO:ORGANIZE THIS USE PILE
 mod utils;
 use utils::camera::{setup,move_camera};
 use utils::movement::*;
 use utils::terrain::*;
 use utils::food::*;
+use utils::text::*;
 use utils::miscellaneous::evolution_manager;
 use crate::utils::data::BestSucess;
 use crate::utils::data::BestBrain;
@@ -21,7 +23,7 @@ fn main() {
             }),
             ..default()
         }))
-        .add_systems(Startup,setup)
+        .add_systems(Startup,(setup,setup_background,setup_text))
         .add_systems(Update,(
                 move_camera,
                 spawn_food,

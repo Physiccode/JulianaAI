@@ -12,11 +12,7 @@ pub fn setup(
     mut meshes:ResMut<Assets<Mesh>>
     ) {
 
-    //Load forest tree pack
-    commands.insert_resource(ForestPack{
-        container:asset_server.load("forest_pack.glb"),
-    });
-   //Spawn camera
+     //Spawn camera
    commands.spawn((
            Camera3d::default(),
            Transform::from_xyz(0.0,2.0,4.0)
@@ -27,23 +23,7 @@ pub fn setup(
            MovableCamera
            ));
 
-   // Add sunlight:
-   commands.spawn((
-           DirectionalLight{
-               illuminance:5000.0,
-               shadow_maps_enabled:true,
-               ..default()
-           },
-           Transform::from_xyz(15.0,30.0,15.0).looking_at(Vec3::ZERO,Vec3::Y),
-
-           ));
-   // Add sky ambient light
-   commands.insert_resource(GlobalAmbientLight{
-       color:Color::from(bevy::color::palettes::tailwind::AMBER_50),
-       brightness:150.0,
-       ..default()
-   });
-   
+     
     // Spawn first juliana
     commands.spawn((
         WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
@@ -67,7 +47,6 @@ pub fn setup(
 }
 
 pub fn move_camera(
-    // TODO:Move the cursor lock logic to another function
     mut cursor_options:Single<&mut CursorOptions>,
     accumulated_mouse_motion:Res<AccumulatedMouseMotion>,
     time:Res<Time>,

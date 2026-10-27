@@ -35,6 +35,8 @@ pub fn starve_juliana(
 
 }
 
+//TODO:WAIT A RANDOM AMMOUNT OF TIME,AND THEN DESPAWN A RANDOM TREE,ONLY SPAWN TREES IF WE HAVEN'T
+//REACHED THE LIMIT
 // TODO:SPAWN TREES NEXT TO FOOD
 pub fn spawn_food(
     food:Query<(),With<Food>>,

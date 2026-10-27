@@ -4,3 +4,4 @@ pub mod movement;
 pub mod terrain;
 pub mod miscellaneous;
 pub mod food;
+pub mod text;
