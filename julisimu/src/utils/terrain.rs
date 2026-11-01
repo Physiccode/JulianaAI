@@ -3,14 +3,14 @@ use bevy::render::mesh::VertexAttributeValues;
 use super::data::*;
 
 pub fn create_ground(
-    /*
     mut commands:Commands,
     mut meshes:ResMut<Assets<Mesh>>,
     mut materials:ResMut<Assets<StandardMaterial>>
-    */
+    /*
     mut gizmos:Gizmos
+    */
     ) {
-/*    let terrain_mesh = Plane3d::default()
+    let terrain_mesh = Plane3d::default()
         .mesh()
         .size(100.0,100.0)
         .subdivisions(50);
@@ -35,7 +35,8 @@ pub fn create_ground(
             })),
             Transform::from_xyz(0.0,0.0,0.0)
             ));
-*/
+
+    /*
 
     let color = Color::srgb(0.35,0.35,0.35); 
     for i in -20..=20 {
@@ -43,23 +44,19 @@ pub fn create_ground(
         gizmos.line(Vec3::new(p,0.0,-20.0),Vec3::new(p,0.0,20.0),color);
         gizmos.line(Vec3::new(-20.0,0.0,p),Vec3::new(20.0,0.0,p),color);
     }
-}
-
-
-pub fn get_terrain_height(/* x:f32,z:f32*/) /*->f32 */{
-    /*
-    let wave1 = (x*0.1).sin() * (z*0.1).cos()*1.5;
-    let wave2 = (x*0.05).sin() * (z*0.05).sin()*2.0;
-    wave1+wave2
     */
 }
 
+
+pub fn get_terrain_height( x:f32,z:f32) ->f32 {
+    let wave1 = (x*0.1).sin() * (z*0.1).cos()*1.5;
+    let wave2 = (x*0.05).sin() * (z*0.05).sin()*2.0;
+    wave1+wave2
+}
+
 pub fn ground_entities(
-/*
-    mut query:Query<&mut Transform,Or<(With<Juliana>,With<AntiJuliana>,With<Food>)>>
-*/
+    mut query:Query<&mut Transform,Or<(With<Juliana>,With<AntiJuliana>)>>
     ){
-    /*
     for mut transform in query.iter_mut() {
         let current_x = transform.translation.x;
         let current_z = transform.translation.z;
@@ -67,7 +64,6 @@ pub fn ground_entities(
         let height_offset = 0.5;
         transform.translation.y = ground_y+height_offset;
     }
-    */
 }
 
 pub fn setup_background(
@@ -78,7 +74,7 @@ pub fn setup_background(
    commands.spawn((
            DirectionalLight{
                illuminance:5000.0,
-               shadow_maps_enabled:true,
+               shadow_maps_enabled:false,
                ..default()
            },
            Transform::from_xyz(15.0,30.0,15.0).looking_at(Vec3::ZERO,Vec3::Y),

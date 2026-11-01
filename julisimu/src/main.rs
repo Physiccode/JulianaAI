@@ -1,6 +1,8 @@
 use bevy::{
     prelude::*,
     diagnostic::{FrameTimeDiagnosticsPlugin,DiagnosticsStore},
+//    light::DirectionalLightShadowMap,
+    
 };
 //TODO:ORGANIZE THIS USE PILE
 mod utils;
@@ -23,6 +25,7 @@ fn main() {
             }),
             ..default()
         }))
+//        .insert_resource(bevy::light::DirectionalLightShadowMap{size:512})
         .add_systems(Startup,(setup,setup_background,setup_text))
         .add_systems(Update,(
                 move_camera,

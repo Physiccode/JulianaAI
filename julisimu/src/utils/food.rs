@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use crate::utils::data::*;
+use super::terrain::get_terrain_height;
 use rand::prelude::*;
 use rand::seq::IndexedRandom;
 use bevy::gltf::GltfMesh;
@@ -63,6 +64,7 @@ pub fn spawn_food(
         let z = rng.random_range(-HALF_SIZE..=HALF_SIZE);
         let random_index = rng.random_range(0..=5);
         let tree_path = format!("forest_pack.glb#Scene{}",random_index);
+        let ground_y =  get_terrain_height(x,z);
         commands.spawn((
             Food,
             Mesh3d(meshes.add(Sphere::default().mesh().uv(32,18))),
@@ -70,7 +72,7 @@ pub fn spawn_food(
                 base_color:Color::from(bevy::color::palettes::tailwind::BLUE_500),
                 ..default()
             })),
-            Transform::from_xyz(x,0.5,z)   
+            Transform::from_xyz(x,ground_y,z)   
             ));
 
         if let Some(mesh_handle) =  gltf.meshes.choose(&mut rng) {

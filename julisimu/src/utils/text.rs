@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use super::data::*;
 
 pub fn setup_text(mut commands:Commands) {
+    /*
     commands.spawn((
             SimulationText,
             Text::new("Generation 1"),
@@ -13,4 +14,5 @@ pub fn setup_text(mut commands:Commands) {
                 ..default()
             },
             ));
+    */
 }
