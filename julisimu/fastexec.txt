@@ -1,0 +1,30 @@
+[package]
+name = "julisimu"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# 1. REMOVE features = ["dynamic_linking"] here so release builds work!
+bevy = { version = "0.19.1" } 
+rand = "0.10.3"
+
+# 2. Move dynamic linking to an optional developer feature flag
+[features]
+default = []
+dev = ["bevy/dynamic_linking"]
+
+# 3. Maximum Speed Profile (Optimized for execution performance, not binary size)
+
+[profile.release]
+opt-level = 3
+lto = "thin"          # Change from true to "thin"
+codegen-units = 1     # Keep 1 to maximize cross-crate optimizations
+panic = "abort"
+strip = true
+
+# 4. Fast Development Profile (Keeps your daily coding snappy)
+[profile.dev]
+opt-level = 1         # Slightly optimizes your own code so it isn't painfully slow
+
+[profile.dev.package."*"]
+opt-level = 3         # Forces Bevy and rand to ALWAYS be fully optimized

@@ -28,14 +28,15 @@ fn main() {
 //        .insert_resource(bevy::light::DirectionalLightShadowMap{size:512})
         .add_systems(Startup,(setup,setup_background,setup_text))
         .add_systems(Update,(
+                create_ground,
                 move_camera,
                 spawn_food,
                 move_juliana,
-                move_predator,
                 starve_juliana,
+                move_predator,
+                update_text,
                 change_food_color,
                 evolution_manager,
-                create_ground,
                 ground_entities
                 ))
         .insert_resource(BestBrain::default())

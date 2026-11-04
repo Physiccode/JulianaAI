@@ -12,8 +12,8 @@ pub fn create_ground(
     ) {
     let terrain_mesh = Plane3d::default()
         .mesh()
-        .size(100.0,100.0)
-        .subdivisions(50);
+        .size(50.0,50.0)
+        .subdivisions(30);
     let mut mesh_handle = meshes.add(terrain_mesh);
     if let Some(mut mesh) = meshes.get_mut(&mesh_handle){
         if let Some(VertexAttributeValues::Float32x3( positions)) = 
@@ -28,9 +28,10 @@ pub fn create_ground(
             Mesh3d(mesh_handle),
             MeshMaterial3d(materials.add(StandardMaterial{
                 base_color:Color::from(bevy::color::palettes::tailwind::STONE_800),
-                perceptual_roughness:0.85,
-                metallic:0.05,
-                reflectance:0.2,
+                perceptual_roughness:1.0,
+                metallic:0.0,
+                reflectance:0.0,
+                alpha_mode:AlphaMode::Opaque,
                 ..default()
             })),
             Transform::from_xyz(0.0,0.0,0.0)
