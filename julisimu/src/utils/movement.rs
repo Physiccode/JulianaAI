@@ -164,6 +164,7 @@ pub fn move_predator(
     mut best_brain:ResMut<BestBrain>,
     mut best_sucess:ResMut<BestSucess>,
     mut mutations:ResMut<Mutations>,
+    mut dead_julianas:ResMut<DeadJulianas>,
     asset_server:Res<AssetServer>,
     ){
     let mut eaten = HashSet::new();
@@ -242,6 +243,7 @@ pub fn move_predator(
                         best_brain.brain = *target_brain;
                         println!("Best brain until now:{:?},sucess count:{}",best_brain.brain,best_sucess.count);
                     }
+                    dead_julianas.count += 1;
                     commands.entity(entity_id).despawn();
 
                     if anti_juliana.current_energy < anti_juliana.max_energy {

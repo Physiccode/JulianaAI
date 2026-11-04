@@ -42,11 +42,38 @@ pub fn create_ground(
 */
 
     let color = Color::srgb(0.35,0.35,0.35); 
-    for i in -20..=20 {
-        let p = i as f32;
-        gizmos.line(Vec3::new(p,0.0,-20.0),Vec3::new(p,0.0,20.0),color);
-        gizmos.line(Vec3::new(-20.0,0.0,p),Vec3::new(20.0,0.0,p),color);
+
+    let step_size = 0.5;
+    let map_limit = 20.0;
+
+    //draw lines along the z axis
+    let mut x = -map_limit;
+    while x <= map_limit {
+        let mut z = -map_limit;
+        while z < map_limit {
+            let next_z = z + step_size;
+            let start =  Vec3::new(x,get_terrain_height(x,z),z);
+            let end  = Vec3::new(x,get_terrain_height(x,next_z),next_z);
+            gizmos.line(start,end,color);
+            z = next_z;
+        }
+        x += 1.0;
     }
+
+    // draw lines along the x axis 
+    let mut z_line = -map_limit;
+    while z_line <= map_limit {
+        let mut x_line = -map_limit;
+        while x_line < map_limit {
+            let next_x = x_line+step_size;
+            let start = Vec3::new(x_line,get_terrain_height(x_line,z_line),z_line);
+            let end = Vec3::new(next_x,get_terrain_height(next_x,z_line),z_line);
+            gizmos.line(start,end,color);
+            x_line = next_x;
+        }
+        z_line += 1.0;
+    }
+
 }
 
 
@@ -59,7 +86,6 @@ pub fn get_terrain_height( x:f32,z:f32) ->f32 {
 pub fn ground_entities(
     mut query:Query<&mut Transform,Or<(With<Juliana>,With<AntiJuliana>)>>
     ){
-    /*
     for mut transform in query.iter_mut() {
         let current_x = transform.translation.x;
         let current_z = transform.translation.z;
@@ -67,7 +93,6 @@ pub fn ground_entities(
         let height_offset = 0.5;
         transform.translation.y = ground_y+height_offset;
     }
-    */
 }
 
 pub fn setup_background(

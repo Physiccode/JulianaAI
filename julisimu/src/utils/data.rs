@@ -5,17 +5,17 @@ pub const CAMERA_SENSIVITY:f32 = 0.003;
 pub const CAMERA_SPEED:f32 = 9.0;
 
 pub const MAX_TREE:usize = 5;
-pub const JULIANA_SPEED:f32 = 8.0;
+pub const JULIANA_SPEED:f32 = 7.0;
 // JDE = JULIANA DEFAULT ENERGY
 pub const JDE:f32 = 90.0;
 // JME = JULIANA MAX ENERGY
 pub const JME:f32 = 300.0;
 
 pub const EAT_DISTANCE:f32 = 0.6;
-pub const MAX_FOOD:usize = 10;
+pub const MAX_FOOD:usize = 3;
 // I'll see hwat happens if i have f32,then ill maybe change this to i32
 pub const HALF_SIZE:f32 = 19.0;
-pub const STARVATION_RATE:f32 = 5.0; // 5 hp/frame
+pub const STARVATION_RATE:f32 = 5.0; // 5 hp/second
                                       
 // AJDE = Anti-Juliana Default Energy
 pub const AJDE:f32 = 150.0;
@@ -26,7 +26,7 @@ pub const AJSR:f32 = 1.0;
 // AJSR = Anti-Juliana Damage rate
 pub const AJDR:f32 = 250.0;
 // AJS = Anti-Juliana speed;
-pub const AJS:f32 = 5.0;
+pub const AJS:f32 = 6.0;
 
 #[derive(Component)]
 pub struct Juliana{
@@ -92,11 +92,12 @@ impl Default for Brain {
                 rng.random_range(-1.0..=1.0), // Food's z preference
                 rng.random_range(-1.0..=1.0), // Predator's x avoidance
                 rng.random_range(-1.0..=1.0), // Predator's z avoidance
+                                              //
                                               // */
-                1.0334368,
-                0.9729434,
-                0.01086089,
-                -0.2569523
+                1.0,
+                1.0,
+                -1.0,
+                -1.0
             ],
         }
     }
@@ -113,12 +114,12 @@ pub struct BestSucess {
 
 #[derive(Resource,Default)]
 pub struct DeadJulianas {
-    count:u8
+    pub count:u8
 }
 
 #[derive(Resource,Default)]
 pub struct Mutations{
-    pub count:u8
+    pub count:u64
 }
 
 #[derive(Component,Clone,Debug)]

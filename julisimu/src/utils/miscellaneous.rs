@@ -13,7 +13,7 @@ pub fn evolution_manager(
     ) {
     if julianas.is_empty() {
         println!("Extinsion occured.Spawning new generation");
-        for _ in 0..5 {
+        for _ in 0..4 {
             let mut rng = rand::rng();
             let x = rng.random_range(-HALF_SIZE..=HALF_SIZE);
             let z = rng.random_range(-HALF_SIZE..=HALF_SIZE);
@@ -46,6 +46,28 @@ pub fn evolution_manager(
                 SkeletalDNA::default(),
             ));
         }
+            let mut rng = rand::rng();
+            let x = rng.random_range(-HALF_SIZE..=HALF_SIZE);
+            let z = rng.random_range(-HALF_SIZE..=HALF_SIZE);
+
+        commands.spawn((
+                        WorldAssetRoot(
+                            asset_server.load(
+                                GltfAssetLabel::Scene(0)
+                                .from_asset("trex/scene.gltf")
+                                )
+                            ),
+                            Transform::from_xyz(x,0.0,z)
+                            .with_scale(Vec3::splat(10.0)),
+                        Juliana {
+                                speed: JULIANA_SPEED,
+                                current_energy: JDE,
+                                max_energy: JME,
+                                eaten_food:0
+                            },
+                        Brain::default(),
+                        SkeletalDNA::default(),
+                    ));
 
     }
     

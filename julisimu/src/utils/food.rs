@@ -23,13 +23,15 @@ pub fn change_food_color (
 pub fn starve_juliana(
     time:Res<Time>,
     mut commands:Commands,
-    mut julianas:Query<(Entity,&mut Juliana)>
+    mut julianas:Query<(Entity,&mut Juliana)>,
+    mut dead_julianas:ResMut<DeadJulianas>,
     ) {
     for (entity,mut juliana) in julianas.iter_mut() {
         juliana.current_energy -= STARVATION_RATE * time.delta_secs();
 
         if juliana.current_energy <= 0.0 {
             println!("JULIANA DESPAWNED");
+            dead_julianas.count += 1;
             commands.entity(entity).despawn();
         }
     } 
