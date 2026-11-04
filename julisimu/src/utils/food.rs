@@ -47,7 +47,9 @@ pub fn spawn_food(
     asset_server:Res<AssetServer>,
     forest_pack:Res<ForestPack>,
     gltf_assets:Res<Assets<Gltf>>,
-    gltf_mesh_assets:Res<Assets<GltfMesh>>
+    gltf_mesh_assets:Res<Assets<GltfMesh>>,
+    tree:Query<Entity,With<Tree>>
+    
     ) {
 
 
@@ -59,6 +61,8 @@ pub fn spawn_food(
     let Some(gltf) = gltf_assets.get(&forest_pack.container) else {return;};
     let mut rng = rand::rng();
     let mut count = food.iter().count();
+    let mut tree_entities:Vec<Entity> = tree.iter().collect();
+    let mut tree_count = tree_entities.len();
     while count < MAX_FOOD {
         let x = rng.random_range(-HALF_SIZE..=HALF_SIZE);
         let z = rng.random_range(-HALF_SIZE..=HALF_SIZE);
@@ -74,34 +78,45 @@ pub fn spawn_food(
             })),
             Transform::from_xyz(x,ground_y,z)   
             ));
+        count += 1;
 
-        if let Some(mesh_handle) =  gltf.meshes.choose(&mut rng) {
-            if let Some(gltf_mesh) = gltf_mesh_assets.get(mesh_handle) {
-                if let Some(primitive) = gltf_mesh.primitives.first() {
-                    let tree_material = if let Some(gltf_mat_handle) = &primitive.material {
-                        if let Some(path) = gltf_mat_handle.path() {
-                            let std_material_path = format!("{}/std",path.to_string());
-                            asset_server.load(&std_material_path)
-                        }
-                        else {
-                            fallback_material.clone()
+        if tree_count > MAX_TREE  && !tree_entities.is_empty(){
+            let idx = rng.random_range(0..tree_entities.len());
+            let random_tree = tree_entities.swap_remove(idx);
+            commands.entity(random_tree).despawn();
+            tree_count -= 1;
+        }
+        else {
+            let probability = rng.random_range(-5.0..=1.0);
+            if  probability < 0.16 {
+                if let Some(mesh_handle) =  gltf.meshes.choose(&mut rng) {
+                    if let Some(gltf_mesh) = gltf_mesh_assets.get(mesh_handle) {
+                        if let Some(primitive) = gltf_mesh.primitives.first() {
+                            let tree_material = if let Some(gltf_mat_handle) = &primitive.material {
+                                if let Some(path) = gltf_mat_handle.path() {
+                                    let std_material_path = format!("{}/std",path.to_string());
+                                    asset_server.load(&std_material_path)
+                                }
+                                else {
+                                    fallback_material.clone()
+                                }
+                            }
+                            else {
+                                fallback_material.clone()
+                            };
+                            commands.spawn((
+                                Mesh3d(primitive.mesh.clone()),
+                                MeshMaterial3d(tree_material),
+                                Transform::from_xyz(x+1.0,ground_y,z+1.0)
+                                .with_scale(Vec3::splat(0.5))
+                                .with_rotation(Quat::from_rotation_x(-90.0_f32.to_radians())),
+                                Tree,
+                            ));
+                            tree_count += 1;
                         }
                     }
-                    else {
-                        fallback_material.clone()
-                    };
-                    commands.spawn((
-                        Mesh3d(primitive.mesh.clone()),
-                        MeshMaterial3d(tree_material),
-                        Transform::from_xyz(x+1.0,0.5,z+1.0)
-                        .with_scale(Vec3::splat(0.5))
-                        .with_rotation(Quat::from_rotation_x(-90.0_f32.to_radians())),
-                    ));
                 }
             }
-    
         }
-        
-        count += 1;
     }
 }

@@ -116,7 +116,7 @@ pub fn move_juliana(
                         scale:skeleton.scale + probability_scale,
                     };
                     //lscale = life scale
-                    let lscale = 1 + probability_scale;
+                    let lscale = 1.0 + probability_scale;
                     for i in 0..4 {
                         let probability_brain = rng.random_range(-0.2..=0.2);
                         if probability_brain != 0.0 {
