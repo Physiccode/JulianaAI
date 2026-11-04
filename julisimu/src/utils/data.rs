@@ -117,7 +117,7 @@ pub struct DeadJulianas {
 
 #[derive(Resource,Default)]
 pub struct Mutations{
-    count:u8
+    pub count:u8
 }
 
 #[derive(Component,Clone,Debug)]
@@ -126,7 +126,7 @@ pub struct Mutations{
 // Larger leg bone length = allows running faster,but burns more energy
 pub struct SkeletalDNA {
     pub leg_bone_length:f32,
-    pub head_bone_length:f32,
+    pub skull_bone_scale:f32,
     pub scale:f32,
 }
 
@@ -135,7 +135,7 @@ impl Default for SkeletalDNA {
     fn default()->Self{
         Self {
             leg_bone_length:1.0,
-            skull_length:1.0,
+            skull_bone_scale:1.0,
             scale:1.0,
         }
     }

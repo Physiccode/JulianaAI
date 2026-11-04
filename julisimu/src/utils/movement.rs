@@ -10,7 +10,7 @@ pub fn move_juliana(
     asset_server:Res<AssetServer>,
     mut julianas:Query<(&mut Transform,&mut Juliana,&Brain,&SkeletalDNA),(With<Juliana>,Without<AntiJuliana>)>,
     predators:Query<&Transform,(With<AntiJuliana>,Without<Juliana>)>,
-
+    mut mutations:ResMut<Mutations>
     mut materials:ResMut<Assets<StandardMaterial>>,
     mut meshes:ResMut<Assets<Mesh>>,
 
@@ -52,7 +52,7 @@ pub fn move_juliana(
         let final_z = (food_direction.z * brain.weights[1] + aj_dir.z * brain.weights[3]).tanh();
         let final_displacement = Vec3::new(final_x,0.0,final_z);
 
-        if food_distance > EAT_DISTANCE + skeleton.head_bone_length {
+        if food_distance > EAT_DISTANCE + skeleton.skull_bone_scale {
 
             if final_displacement != Vec3::ZERO {
                 let final_dir = final_displacement.normalize();
@@ -94,26 +94,45 @@ pub fn move_juliana(
                     let mut rng = rand::rng();
                     let mut baby_brain = brain.clone();
 
-                    let probability_leg =  rng.random_range(-0.5..=0.5)
-                    if probability_leg == 0.0 {println!("A mutation happened in the leg of juliana's baby")}
-                    let probability_skull= rng.random_range(-0.5..=0.5)
-                    if probability_leg == 0.0 {println!("A mutation happened in the skull of juliana's baby")}
-                    let probability_scale = rng.random_range(-0.2..=0.4)
+                    let probability_leg =  rng.random_range(-0.5..=0.5);
+                    if probability_leg == 0.0 {
+                        println!("A mutation happened in the leg of juliana's baby");
+                        mutations.count += 1;
+                    }
+                    let probability_skull= rng.random_range(-0.5..=0.5);
+                    if probability_leg == 0.0 {
+                        println!("A mutation happened in the skull of juliana's baby");
+                        mutations.count += 1;
+                    }
+                    let probability_scale = rng.random_range(-0.2..=0.4);
+                    if probability_leg == 0.0 {
+                        println!("A mutation has happened in the scale of juliana's baby");
+                        mutations.count += 1;
+                    }
                         
                     let mut baby_skeleton = SkeletalDNA{
                         leg_bone_length:skeleton.leg_bone_length + probability_leg,
-                        head_bone_length:skeleton.head_bone_length + probability_head,
+                        skull_bone_scale:skeleton.skull_bone_scale + probability_skull,
                         scale:skeleton.scale + probability_scale,
                     };
                     for i in 0..4 {
-                        baby_brain.weights[i] += rng.random_range(-0.2..=0.2);
+                        let probability_brain = rng.random_range(-0.2..=0.2);
+                        if probability_brain == 0 {
+                            println!("A mutation has happened in the neural weights/brain of juliana's baby");
+                            mutations.count += 1;
+                        }
+                        baby_brain.weights[i] += probability_brain ;
                         baby_brain.weights[i] = baby_brain.weights[i].clamp(-2.0,2.0);
                     }
-                    let speed_reducer = rng.random_range(0.0..=0.5);
+                    let probability_speed = rng.random_range(0.0..=0.5);
+                    if probability_speed == 0 {
+                        println!("A mutation has happened in the speed of juliana's baby");
+                        mutations.count += 1;
+                    }
                         commands.spawn((
                             Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,0.5,pos.z-2.0).with_scale(Vec3::splat(10.0)),
                             Juliana{
-                                speed:JULIANA_SPEED - speed_reducer,
+                                speed:JULIANA_SPEED - probability_speed,
                                 current_energy:JDE,
                                 max_energy:JME,
                                 eaten_food:0,
@@ -142,6 +161,7 @@ pub fn move_predator(
     mut materials:ResMut<Assets<StandardMaterial>>,
     mut best_brain:ResMut<BestBrain>,
     mut best_sucess:ResMut<BestSucess>,
+    mut mutations:ResMut<Mutations>,
     asset_server:Res<AssetServer>,
     ){
     let mut eaten = HashSet::new();
@@ -184,7 +204,12 @@ pub fn move_predator(
                     println!("Spawning anti-juliana's child");
                     let pos = transform.translation;
                     let mut rng = rand::rng();
-                    let speed_reducer = rng.random_range(0.0..=0.5);
+                    let probability_speed = rng.random_range(0.0..=0.5);
+                    if probability_speed == 0 {
+                        println!("A mutation has happened in the speed of Anti Juliana's baby");
+                        mutations.count += 1;
+                    }
+
                     commands.spawn((
                         WorldAssetRoot(
                             asset_server.load(
@@ -196,7 +221,7 @@ pub fn move_predator(
                             AntiJuliana{
                                 current_energy:AJDE,
                                 max_energy:AJME,
-                                speed:AJS-speed_reducer,
+                                speed:AJS-probability_speed,
                                 attack_power:AJDR,
                             }
 
@@ -226,7 +251,11 @@ pub fn move_predator(
                         println!("Spawning anti-juliana's child");
                         let pos = transform.translation;
                         let mut rng = rand::rng();
-                        let speed_reducer = rng.random_range(0.0..=0.5);
+                        let probability_speed = rng.random_range(0.0..=0.5);
+                        if probability_speed == 0 {
+                            println!("A mutation has happened in the speed of Anti Juliana's baby");
+                            mutations.count += 1;
+                        }
                         commands.spawn((
                             WorldAssetRoot(
                                 asset_server.load(
@@ -238,7 +267,7 @@ pub fn move_predator(
                                 AntiJuliana{
                                     current_energy:AJDE,
                                     max_energy:AJME,
-                                    speed:AJS-speed_reducer,
+                                    speed:AJS-probability_speed,
                                     attack_power:AJDR,
                                 }
 
