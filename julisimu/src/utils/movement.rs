@@ -10,7 +10,7 @@ pub fn move_juliana(
     asset_server:Res<AssetServer>,
     mut julianas:Query<(&mut Transform,&mut Juliana,&Brain,&SkeletalDNA),(With<Juliana>,Without<AntiJuliana>)>,
     predators:Query<&Transform,(With<AntiJuliana>,Without<Juliana>)>,
-    mut mutations:ResMut<Mutations>
+    mut mutations:ResMut<Mutations>,
     mut materials:ResMut<Assets<StandardMaterial>>,
     mut meshes:ResMut<Assets<Mesh>>,
 
@@ -95,17 +95,17 @@ pub fn move_juliana(
                     let mut baby_brain = brain.clone();
 
                     let probability_leg =  rng.random_range(-0.5..=0.5);
-                    if probability_leg == 0.0 {
+                    if probability_leg != 0.0 {
                         println!("A mutation happened in the leg of juliana's baby");
                         mutations.count += 1;
                     }
-                    let probability_skull= rng.random_range(-0.5..=0.5);
-                    if probability_leg == 0.0 {
+                    let probability_skull = rng.random_range(-0.5..=0.5);
+                    if probability_leg != 0.0 {
                         println!("A mutation happened in the skull of juliana's baby");
                         mutations.count += 1;
                     }
                     let probability_scale = rng.random_range(-0.2..=0.4);
-                    if probability_leg == 0.0 {
+                    if probability_leg != 0.0 {
                         println!("A mutation has happened in the scale of juliana's baby");
                         mutations.count += 1;
                     }
@@ -115,9 +115,11 @@ pub fn move_juliana(
                         skull_bone_scale:skeleton.skull_bone_scale + probability_skull,
                         scale:skeleton.scale + probability_scale,
                     };
+                    //lscale = life scale
+                    let lscale = 1 + probability_scale;
                     for i in 0..4 {
                         let probability_brain = rng.random_range(-0.2..=0.2);
-                        if probability_brain == 0 {
+                        if probability_brain != 0.0 {
                             println!("A mutation has happened in the neural weights/brain of juliana's baby");
                             mutations.count += 1;
                         }
@@ -125,16 +127,16 @@ pub fn move_juliana(
                         baby_brain.weights[i] = baby_brain.weights[i].clamp(-2.0,2.0);
                     }
                     let probability_speed = rng.random_range(0.0..=0.5);
-                    if probability_speed == 0 {
+                    if probability_speed != 0.0 {
                         println!("A mutation has happened in the speed of juliana's baby");
                         mutations.count += 1;
                     }
                         commands.spawn((
-                            Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,0.5,pos.z-2.0).with_scale(Vec3::splat(10.0)),
+                            Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,0.5,pos.z-2.0).with_scale(Vec3::splat(10.0*lscale)),
                             Juliana{
                                 speed:JULIANA_SPEED - probability_speed,
-                                current_energy:JDE,
-                                max_energy:JME,
+                                current_energy:JDE * lscale,
+                                max_energy:JME * lscale,
                                 eaten_food:0,
                             },
                             baby_brain,
@@ -205,7 +207,7 @@ pub fn move_predator(
                     let pos = transform.translation;
                     let mut rng = rand::rng();
                     let probability_speed = rng.random_range(0.0..=0.5);
-                    if probability_speed == 0 {
+                    if probability_speed != 0.0 {
                         println!("A mutation has happened in the speed of Anti Juliana's baby");
                         mutations.count += 1;
                     }
@@ -252,7 +254,7 @@ pub fn move_predator(
                         let pos = transform.translation;
                         let mut rng = rand::rng();
                         let probability_speed = rng.random_range(0.0..=0.5);
-                        if probability_speed == 0 {
+                        if probability_speed != 0.0 {
                             println!("A mutation has happened in the speed of Anti Juliana's baby");
                             mutations.count += 1;
                         }

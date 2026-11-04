@@ -8,8 +8,8 @@ pub fn evolution_manager(
     julianas:Query<(),With<Juliana>>,
     best_brain:Res<BestBrain>,
     mut materials:ResMut<Assets<StandardMaterial>>,
-    mut meshes:ResMut<Assets<Mesh>>
-
+    mut meshes:ResMut<Assets<Mesh>>,
+    mut mutations:ResMut<Mutations>,
     ) {
     if julianas.is_empty() {
         println!("Extinsion occured.Spawning new generation");
@@ -20,6 +20,10 @@ pub fn evolution_manager(
             let mut brain = best_brain.brain;
             for weight in brain.weights.iter_mut() {
                 let mutation = rng.random_range(-2.0..=2.0);
+                if mutation != 0.0 {
+                        println!("A mutation happened in the skull of juliana's baby");
+                        mutations.count += 1;
+                    }
                 *weight = (*weight+mutation).clamp(-1.0,1.0);
             }
 

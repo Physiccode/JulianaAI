@@ -27,18 +27,21 @@ pub fn update_text(
     juliana_queries:Query<Entity,With<Juliana>>,
     anti_julianas:Query<Entity,With<AntiJuliana>>,
     food:Query<Entity,With<Food>>,
+    mutations:Res<Mutations>,
     mut text_query:Query<&mut Text,With<SimulationText>>,
     ) {
 
     let count = juliana_queries.iter().count();
     let ajcount = anti_julianas.iter().count();
     let food = food.iter().count();
+    let mutations_count = mutations.count;
 
     if let Ok(mut text) = text_query.single_mut() {
         **text = format!("
         Julianas:{count}
         Anti-julianas:{ajcount}
         Food:{food}
+        Mutations:{mutations_count}
             ");
     }
 }
