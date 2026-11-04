@@ -2,17 +2,25 @@ use bevy::prelude::*;
 use super::data::*;
 
 pub fn setup_text(mut commands:Commands) {
-    commands.spawn((
+    commands.spawn(Node{
+        position_type:PositionType::Absolute,
+        top:Val::Px(0.0),
+        left:Val::Px(0.0),
+        margin:UiRect::all(Val::Px(0.0)),
+        padding:UiRect::all(Val::Px(0.0)),
+        flex_direction:FlexDirection::Column,
+        ..default()
+    }).with_children(|parent| {
+        parent.spawn((
             SimulationText,
             Text::new(""),
-            TextColor(Color::from(bevy::color::palettes::tailwind::SLATE_100)),
-            Node {
-                position_type:PositionType::Absolute,
-                top:px(6),
-                left:px(5),
+            TextColor(Color::from(bevy::color::palettes::tailwind::SLATE_500)),
+            TextFont{
+                font_size:FontSize::Px(16.0),
                 ..default()
-            },
+            }
             ));
+    });
 }
 
 pub fn update_text(
@@ -35,5 +43,8 @@ pub fn update_text(
     }
 }
 
+//Show dead julianas
+//Show the ammount of occured mutations
+//Show longest leg length
 //Show the best neural network to screen
 //Make it so i can toggle when the text is off/on

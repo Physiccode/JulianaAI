@@ -26,11 +26,38 @@ pub fn setup(
      
     // Spawn first juliana
     commands.spawn((
-        WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
         Transform::from_xyz(0.0,0.5,0.0).with_scale(Vec3::splat(0.01)),
         Juliana::default(),
         Brain::default(),
-    ));
+        SkeletalDNA::default(),
+    )).with_children(|parent|{
+        parent.spawn((
+                Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
+                MeshMaterial3d(materials.add(StandardMaterial{
+                    base_color:Color::from(bevy::color::palettes::tailwind::GRAY_400),
+                    ..default()
+                })),
+                Transform {
+                    translation:Vec3::new(-0.4,-0.2,0.0),
+                    scale:Vec3::new(1.0,1.0,1.0),
+                    ..default()
+                }
+                ));
+        // right leg
+        parent.spawn((
+                Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
+                MeshMaterial3d(materials.add(StandardMaterial{
+                    base_color:Color::from(bevy::color::palettes::tailwind::GRAY_400),
+                    ..default()
+                })),
+                Transform {
+                    translation:Vec3::new(0.4,-0.2,0.0),
+                    scale:Vec3::new(1.0,1.0,1.0),
+                    ..default()
+                }
+                ));
+
+    });
 
     let (x,z) = get_correct_pos();
     // Spawn first predator 

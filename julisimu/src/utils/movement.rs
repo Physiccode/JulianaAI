@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use super::data::*;
 use rand::prelude::*;
-use bevy::gltf::GltfAssetLabel;
 use std::collections::HashSet;
 
 pub fn move_juliana(
@@ -9,15 +8,20 @@ pub fn move_juliana(
     time:Res<Time>,
     food:Query<(&Transform,Entity),(With<Food>,Without<Juliana>)>,
     asset_server:Res<AssetServer>,
-    mut julianas:Query<(&mut Transform,&mut Juliana,&Brain),(With<Juliana>,Without<AntiJuliana>)>,
-    predators:Query<&Transform,(With<AntiJuliana>,Without<Juliana>)>
+    mut julianas:Query<(&mut Transform,&mut Juliana,&Brain,&SkeletalDNA),(With<Juliana>,Without<AntiJuliana>)>,
+    predators:Query<&Transform,(With<AntiJuliana>,Without<Juliana>)>,
+    mut materials:ResMut<Assets<StandardMaterial>>,
+    mut meshes:ResMut<Assets<Mesh>>,
+
     ) {
     let mut eaten = HashSet::new();
     
-    for (mut transform ,mut juliana,brain) in julianas.iter_mut() {
+    for (mut transform ,mut juliana,brain,skeleton) in julianas.iter_mut() {
 
         let juliana_transform = transform.translation;
         let mut julia = juliana;
+        let speed = julia.speed * skeleton.leg_bone_length;
+        let energy_drain_multiplier = 1.0+(skeleton.leg_bone_length*0.5);
 
         let nearest_food = food.iter()
             .filter(|(_,entity_id)| !eaten.contains(entity_id))
@@ -48,7 +52,7 @@ pub fn move_juliana(
         if food_distance > EAT_DISTANCE {
             if final_displacement != Vec3::ZERO {
                 let final_dir = final_displacement.normalize();
-                transform.translation += final_dir * julia.speed * time.delta_secs(); 
+                transform.translation += final_dir * speed * time.delta_secs(); 
 
                 transform.translation.x = transform.translation.x.clamp(-HALF_SIZE,HALF_SIZE);
                 transform.translation.z = transform.translation.z.clamp(-HALF_SIZE,HALF_SIZE);
@@ -75,22 +79,54 @@ pub fn move_juliana(
                     // potentially reduce juliana's children's speed
                     let mut rng = rand::rng();
                     let mut baby_brain = brain.clone();
+                    let mut baby_skeleton = SkeletalDNA{
+                        leg_bone_length:skeleton.leg_bone_length+rng.random_range(-0.5..=0.5),
+                        head_bone_length:skeleton.head_bone_length+rng.random_range(-0.5..=0.5),
+                    };
                     for i in 0..4 {
                         baby_brain.weights[i] += rng.random_range(-0.2..=0.2);
                         baby_brain.weights[i] = baby_brain.weights[i].clamp(-2.0,2.0);
                     }
                     let speed_reducer = rng.random_range(0.0..=0.5);
-                    commands.spawn((
-                        WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
-                        Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,0.5,pos.z -2.0).with_scale(Vec3::splat(0.01)),
-                        Juliana{
-                            speed:JULIANA_SPEED - speed_reducer,
-                            current_energy:JDE,
-                            max_energy:JME,
-                            eaten_food:0,
-                        },
-                        baby_brain,
-                    ));
+                        commands.spawn((
+                            Transform::from_xyz(0.0,0.5,0.0),
+                            Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,0.5,pos.z-2.0).with_scale(Vec3::splat(0.01)),
+                            Juliana{
+                                speed:JULIANA_SPEED - speed_reducer,
+                                current_energy:JDE,
+                                max_energy:JME,
+                                eaten_food:0,
+                            },
+                            Brain::default(),
+                            SkeletalDNA::default(),
+                        )).with_children(|parent|{
+                            parent.spawn((
+                                    Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
+                                    MeshMaterial3d(materials.add(StandardMaterial{
+                                        base_color:Color::from(bevy::color::palettes::tailwind::GRAY_400),
+                                        ..default()
+                                    })),
+                                    Transform {
+                                        translation:Vec3::new(-0.4,-0.2,0.0),
+                                        scale:Vec3::new(1.0,baby_skeleton.leg_bone_length,1.0),
+                                        ..default()
+                                    }
+                                    ));
+                            // right leg
+                            parent.spawn((
+                                    Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
+                                    MeshMaterial3d(materials.add(StandardMaterial{
+                                        base_color:Color::from(bevy::color::palettes::tailwind::GRAY_400),
+                                        ..default()
+                                    })),
+                                    Transform {
+                                        translation:Vec3::new(0.4,-0.2,0.0),
+                                        scale:Vec3::new(1.0,baby_skeleton.leg_bone_length,1.0),
+                                        ..default()
+                                    }
+                                    ));
+
+                        });
                 }
             }
         }

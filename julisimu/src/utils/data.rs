@@ -119,6 +119,7 @@ pub struct SkeletalDNA {
     pub head_bone_length:f32,
 }
 
+//TODO:ADD MUTATION
 impl Default for SkeletalDNA {
     fn default()->Self{
         Self {
