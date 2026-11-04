@@ -57,7 +57,7 @@ pub fn move_juliana(
 
                 let target_rotation = 
                     Transform::IDENTITY 
-                    .looking_to(final_dir,Vec3::Y)
+                    .looking_to(-final_dir,Vec3::Y)
                     .rotation;
                 transform.rotation = transform.rotation.slerp(
                     target_rotation,
@@ -153,11 +153,11 @@ pub fn move_predator(
             let speed = anti_juliana.speed * direction.normalize();
 
             let target_rotation = Transform::IDENTITY 
-                .looking_to(final_dir,Vec3::Y)
+                .looking_to(-direction.normalize(),Vec3::Y)
                 .rotation;
             
             transform.rotation = transform.rotation.slerp(
-                target_rotation,anti_juliana.speed*time.delta_secs
+                target_rotation,anti_juliana.speed*time.delta_secs()
                 );
             transform.translation += speed * time.delta_secs();
         }
@@ -223,7 +223,7 @@ pub fn move_predator(
                                     .from_asset("cat/scene.gltf")
                                     )
                                 ),
-                                Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,1.0,pos.z-2.0),
+                                Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,1.0,pos.z-2.0).with_scale(Vec3::splat(7.0)),
                                 AntiJuliana{
                                     current_energy:AJDE,
                                     max_energy:AJME,

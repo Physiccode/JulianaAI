@@ -50,7 +50,7 @@ pub fn setup(
                 )
             ),
             Transform::from_xyz(x,0.0,z)
-            .with_scale(Vec3::splat(10.0)),
+            .with_scale(Vec3::splat(7.0)),
             AntiJuliana::default(),
         ));
     /*
