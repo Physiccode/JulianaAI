@@ -6,7 +6,10 @@ pub fn evolution_manager(
     mut commands:Commands,
     asset_server:Res<AssetServer>,
     julianas:Query<(),With<Juliana>>,
-    best_brain:Res<BestBrain>
+    best_brain:Res<BestBrain>,
+    mut materials:ResMut<Assets<StandardMaterial>>,
+    mut meshes:ResMut<Assets<Mesh>>
+
     ) {
     if julianas.is_empty() {
         println!("Extinsion occured.Spawning new generation");
@@ -20,17 +23,43 @@ pub fn evolution_manager(
                 *weight = (*weight+mutation).clamp(-1.0,1.0);
             }
             commands.spawn((
-                    WorldAssetRoot(asset_server.load("bacteria.glb#Scene0")),
-                    Transform::from_xyz(x, 0.5, z).with_scale(Vec3::splat(0.01)),
-                    Juliana {
+                Transform::from_xyz(x,0.5,z).with_scale(Vec3::splat(1.0)),
+                Juliana {
                         speed: JULIANA_SPEED,
                         current_energy: JDE,
                         max_energy: JME,
                         eaten_food:0
                     },
-                    // Gives each new starter a unique set of randomized preference weights
-                    brain,
-                ));
+                brain,
+                SkeletalDNA::default(),
+            )).with_children(|parent|{
+                parent.spawn((
+                        Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
+                        MeshMaterial3d(materials.add(StandardMaterial{
+                            base_color:Color::from(bevy::color::palettes::tailwind::GRAY_400),
+                            ..default()
+                        })),
+                        Transform {
+                            translation:Vec3::new(-0.4,-0.2,0.0),
+                            scale:Vec3::new(1.0,1.0,1.0),
+                            ..default()
+                        }
+                        ));
+                // right leg
+                parent.spawn((
+                        Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
+                        MeshMaterial3d(materials.add(StandardMaterial{
+                            base_color:Color::from(bevy::color::palettes::tailwind::GRAY_400),
+                            ..default()
+                        })),
+                        Transform {
+                            translation:Vec3::new(0.4,-0.2,0.0),
+                            scale:Vec3::new(1.0,1.0,1.0),
+                            ..default()
+                        }
+                        ));
+
+            });
         }
 
     }

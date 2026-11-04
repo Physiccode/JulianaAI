@@ -10,6 +10,7 @@ pub fn move_juliana(
     asset_server:Res<AssetServer>,
     mut julianas:Query<(&mut Transform,&mut Juliana,&Brain,&SkeletalDNA),(With<Juliana>,Without<AntiJuliana>)>,
     predators:Query<&Transform,(With<AntiJuliana>,Without<Juliana>)>,
+
     mut materials:ResMut<Assets<StandardMaterial>>,
     mut meshes:ResMut<Assets<Mesh>>,
 
@@ -89,7 +90,6 @@ pub fn move_juliana(
                     }
                     let speed_reducer = rng.random_range(0.0..=0.5);
                         commands.spawn((
-                            Transform::from_xyz(0.0,0.5,0.0),
                             Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,0.5,pos.z-2.0).with_scale(Vec3::splat(0.01)),
                             Juliana{
                                 speed:JULIANA_SPEED - speed_reducer,
@@ -97,8 +97,8 @@ pub fn move_juliana(
                                 max_energy:JME,
                                 eaten_food:0,
                             },
-                            Brain::default(),
-                            SkeletalDNA::default(),
+                            baby_brain,
+                            baby_skeleton.clone(),
                         )).with_children(|parent|{
                             parent.spawn((
                                     Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
