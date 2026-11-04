@@ -22,8 +22,16 @@ pub fn evolution_manager(
                 let mutation = rng.random_range(-2.0..=2.0);
                 *weight = (*weight+mutation).clamp(-1.0,1.0);
             }
+
             commands.spawn((
-                Transform::from_xyz(x,0.5,z).with_scale(Vec3::splat(1.0)),
+                WorldAssetRoot(
+                    asset_server.load(
+                        GltfAssetLabel::Scene(0)
+                        .from_asset("trex/scene.gltf")
+                        )
+                    ),
+                    Transform::from_xyz(x,0.0,z)
+                    .with_scale(Vec3::splat(10.0)),
                 Juliana {
                         speed: JULIANA_SPEED,
                         current_energy: JDE,
@@ -32,34 +40,7 @@ pub fn evolution_manager(
                     },
                 brain,
                 SkeletalDNA::default(),
-            )).with_children(|parent|{
-                parent.spawn((
-                        Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
-                        MeshMaterial3d(materials.add(StandardMaterial{
-                            base_color:Color::from(bevy::color::palettes::tailwind::GRAY_400),
-                            ..default()
-                        })),
-                        Transform {
-                            translation:Vec3::new(-0.4,-0.2,0.0),
-                            scale:Vec3::new(1.0,1.0,1.0),
-                            ..default()
-                        }
-                        ));
-                // right leg
-                parent.spawn((
-                        Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
-                        MeshMaterial3d(materials.add(StandardMaterial{
-                            base_color:Color::from(bevy::color::palettes::tailwind::GRAY_400),
-                            ..default()
-                        })),
-                        Transform {
-                            translation:Vec3::new(0.4,-0.2,0.0),
-                            scale:Vec3::new(1.0,1.0,1.0),
-                            ..default()
-                        }
-                        ));
-
-            });
+            ));
         }
 
     }

@@ -50,9 +50,19 @@ pub fn move_juliana(
         let final_z = (food_direction.z * brain.weights[1] + aj_dir.z * brain.weights[3]).tanh();
         let final_displacement = Vec3::new(final_x,0.0,final_z);
 
-        if food_distance > EAT_DISTANCE {
+        if food_distance > EAT_DISTANCE + skeleton.head_bone_length {
+
             if final_displacement != Vec3::ZERO {
                 let final_dir = final_displacement.normalize();
+
+                let target_rotation = 
+                    Transform::IDENTITY 
+                    .looking_to(final_dir,Vec3::Y)
+                    .rotation;
+                transform.rotation = transform.rotation.slerp(
+                    target_rotation,
+                    5.0*time.delta_secs()
+                    );
                 transform.translation += final_dir * speed * time.delta_secs(); 
 
                 transform.translation.x = transform.translation.x.clamp(-HALF_SIZE,HALF_SIZE);
@@ -90,7 +100,7 @@ pub fn move_juliana(
                     }
                     let speed_reducer = rng.random_range(0.0..=0.5);
                         commands.spawn((
-                            Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,0.5,pos.z-2.0).with_scale(Vec3::splat(0.01)),
+                            Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,0.5,pos.z-2.0).with_scale(Vec3::splat(10.0)),
                             Juliana{
                                 speed:JULIANA_SPEED - speed_reducer,
                                 current_energy:JDE,
@@ -99,34 +109,13 @@ pub fn move_juliana(
                             },
                             baby_brain,
                             baby_skeleton.clone(),
-                        )).with_children(|parent|{
-                            parent.spawn((
-                                    Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
-                                    MeshMaterial3d(materials.add(StandardMaterial{
-                                        base_color:Color::from(bevy::color::palettes::tailwind::GRAY_400),
-                                        ..default()
-                                    })),
-                                    Transform {
-                                        translation:Vec3::new(-0.4,-0.2,0.0),
-                                        scale:Vec3::new(1.0,baby_skeleton.leg_bone_length,1.0),
-                                        ..default()
-                                    }
-                                    ));
-                            // right leg
-                            parent.spawn((
-                                    Mesh3d(meshes.add(Cylinder::new(0.1,1.0))),
-                                    MeshMaterial3d(materials.add(StandardMaterial{
-                                        base_color:Color::from(bevy::color::palettes::tailwind::GRAY_400),
-                                        ..default()
-                                    })),
-                                    Transform {
-                                        translation:Vec3::new(0.4,-0.2,0.0),
-                                        scale:Vec3::new(1.0,baby_skeleton.leg_bone_length,1.0),
-                                        ..default()
-                                    }
-                                    ));
-
-                        });
+                            WorldAssetRoot(
+                                asset_server.load(
+                                    GltfAssetLabel::Scene(0)
+                                    .from_asset("trex/scene.gltf")
+                                    )
+                                ),
+                        ));
                 }
             }
         }
@@ -141,7 +130,8 @@ pub fn move_predator(
     mut meshes:ResMut<Assets<Mesh>>,
     mut materials:ResMut<Assets<StandardMaterial>>,
     mut best_brain:ResMut<BestBrain>,
-    mut best_sucess:ResMut<BestSucess>
+    mut best_sucess:ResMut<BestSucess>,
+    asset_server:Res<AssetServer>,
     ){
     let mut eaten = HashSet::new();
     
@@ -159,7 +149,16 @@ pub fn move_predator(
         let direction = target_pos - predator_pos;
         let distance = direction.length();
         if distance > EAT_DISTANCE {
+
             let speed = anti_juliana.speed * direction.normalize();
+
+            let target_rotation = Transform::IDENTITY 
+                .looking_to(final_dir,Vec3::Y)
+                .rotation;
+            
+            transform.rotation = transform.rotation.slerp(
+                target_rotation,anti_juliana.speed*time.delta_secs
+                );
             transform.translation += speed * time.delta_secs();
         }
         else {
@@ -182,7 +181,7 @@ pub fn move_predator(
                                 unlit:false,
                                 ..default()
                             })),
-                            Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,1.0,pos.z-2.0),
+                            Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,1.0,pos.z-2.0).with_scale(Vec3::splat(10.0)),
                             AntiJuliana{
                                 current_energy:AJDE,
                                 max_energy:AJME,
@@ -218,12 +217,12 @@ pub fn move_predator(
                         let mut rng = rand::rng();
                         let speed_reducer = rng.random_range(0.0..=0.5);
                         commands.spawn((
-                                Mesh3d(meshes.add(Capsule3d::default())),
-                                MeshMaterial3d(materials.add(StandardMaterial{
-                                    base_color:Color::from(bevy::color::palettes::tailwind::FUCHSIA_950),
-                                    unlit:false,
-                                    ..default()
-                                })),
+                            WorldAssetRoot(
+                                asset_server.load(
+                                    GltfAssetLabel::Scene(0)
+                                    .from_asset("cat/scene.gltf")
+                                    )
+                                ),
                                 Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,1.0,pos.z-2.0),
                                 AntiJuliana{
                                     current_energy:AJDE,

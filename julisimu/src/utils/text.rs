@@ -44,6 +44,7 @@ pub fn update_text(
 }
 
 //Show dead julianas
+//Add a button that fixex the camera position
 //Show the ammount of occured mutations
 //Show longest leg length
 //Show the best neural network to screen
