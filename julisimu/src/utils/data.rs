@@ -127,6 +127,7 @@ pub struct Mutations{
 pub struct SkeletalDNA {
     pub leg_bone_length:f32,
     pub head_bone_length:f32,
+    pub scale:f32,
 }
 
 //TODO:ADD MUTATION
@@ -134,7 +135,8 @@ impl Default for SkeletalDNA {
     fn default()->Self{
         Self {
             leg_bone_length:1.0,
-            head_bone_length:1.0,
+            skull_length:1.0,
+            scale:1.0,
         }
     }
 }

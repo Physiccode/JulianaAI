@@ -21,7 +21,9 @@ pub fn move_juliana(
 
         let juliana_transform = transform.translation;
         let mut julia = juliana;
+
         let speed = julia.speed * skeleton.leg_bone_length;
+
         let energy_drain_multiplier = 1.0+(skeleton.leg_bone_length*0.5);
 
         let nearest_food = food.iter()
@@ -63,6 +65,7 @@ pub fn move_juliana(
                     target_rotation,
                     5.0*time.delta_secs()
                     );
+
                 transform.translation += final_dir * speed * time.delta_secs(); 
 
                 transform.translation.x = transform.translation.x.clamp(-HALF_SIZE,HALF_SIZE);
@@ -90,9 +93,17 @@ pub fn move_juliana(
                     // potentially reduce juliana's children's speed
                     let mut rng = rand::rng();
                     let mut baby_brain = brain.clone();
+
+                    let probability_leg =  rng.random_range(-0.5..=0.5)
+                    if probability_leg == 0.0 {println!("A mutation happened in the leg of juliana's baby")}
+                    let probability_skull= rng.random_range(-0.5..=0.5)
+                    if probability_leg == 0.0 {println!("A mutation happened in the skull of juliana's baby")}
+                    let probability_scale = rng.random_range(-0.2..=0.4)
+                        
                     let mut baby_skeleton = SkeletalDNA{
-                        leg_bone_length:skeleton.leg_bone_length+rng.random_range(-0.5..=0.5),
-                        head_bone_length:skeleton.head_bone_length+rng.random_range(-0.5..=0.5),
+                        leg_bone_length:skeleton.leg_bone_length + probability_leg,
+                        head_bone_length:skeleton.head_bone_length + probability_head,
+                        scale:skeleton.scale + probability_scale,
                     };
                     for i in 0..4 {
                         baby_brain.weights[i] += rng.random_range(-0.2..=0.2);
@@ -175,13 +186,13 @@ pub fn move_predator(
                     let mut rng = rand::rng();
                     let speed_reducer = rng.random_range(0.0..=0.5);
                     commands.spawn((
-                            Mesh3d(meshes.add(Capsule3d::default())),
-                            MeshMaterial3d(materials.add(StandardMaterial{
-                                base_color:Color::from(bevy::color::palettes::tailwind::FUCHSIA_950),
-                                unlit:false,
-                                ..default()
-                            })),
-                            Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,1.0,pos.z-2.0).with_scale(Vec3::splat(10.0)),
+                        WorldAssetRoot(
+                            asset_server.load(
+                                GltfAssetLabel::Scene(0)
+                                .from_asset("cat/scene.gltf")
+                                )
+                            ),
+                            Transform::from_xyz(pos.x+EAT_DISTANCE+1.0,1.0,pos.z-2.0).with_scale(Vec3::splat(7.0)),
                             AntiJuliana{
                                 current_energy:AJDE,
                                 max_energy:AJME,
