@@ -1,0 +1,11 @@
+Model Information:
+* title:	Tyrannosaurus rex skeleton
+* source:	https://sketchfab.com/3d-models/tyrannosaurus-rex-skeleton-9aabc82e228141b2b8bba56849032430
+* author:	marcllobet (https://sketchfab.com/marcllobet)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Tyrannosaurus rex skeleton" (https://sketchfab.com/3d-models/tyrannosaurus-rex-skeleton-9aabc82e228141b2b8bba56849032430) by marcllobet (https://sketchfab.com/marcllobet) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

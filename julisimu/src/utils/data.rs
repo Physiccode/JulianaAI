@@ -110,6 +110,16 @@ pub struct BestSucess {
     pub count:u8,
 }
 
+#[derive(Resource,Default)]
+pub struct DeadJulianas {
+    count:u8
+}
+
+#[derive(Resource,Default)]
+pub struct Mutations{
+    count:u8
+}
+
 #[derive(Component,Clone,Debug)]
 // Larger head bone length = allows eating from a larger distance but causes more weight so -
 // more energy spent

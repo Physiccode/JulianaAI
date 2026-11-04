@@ -62,15 +62,16 @@ pub fn setup(
     let (x,z) = get_correct_pos();
     // Spawn first predator 
     commands.spawn((
-        Mesh3d(meshes.add(Capsule3d::default())),
-        MeshMaterial3d(materials.add(StandardMaterial{
-            base_color:Color::from(bevy::color::palettes::tailwind::FUCHSIA_950),
-            unlit:false,
-            ..default()
-        })),
-        Transform::from_xyz(x,1.5,z),
-        AntiJuliana::default(),
-    ));
+            WorldAssetRoot(
+                asset_server.load(
+                    GltfAssetLabel::Scene(0)
+                    .from_asset("trex/scene.gltf")
+                    )
+                ),
+                Transform::from_xyz(x,0.0,z)
+                .with_scale(Vec3::splat(10.0)),
+                AntiJuliana::default(),
+            ));
 }
 
 pub fn move_camera(

@@ -14,6 +14,8 @@ use utils::text::*;
 use utils::miscellaneous::evolution_manager;
 use crate::utils::data::BestSucess;
 use crate::utils::data::BestBrain;
+use crate::utils::data::DeadJulianas;
+use crate::utils::data::Mutations;
 
 //TODO:ADD AN ENTITY COUNTER AND A JULIANA COUNTER AT THE RIGHT TOP PART OF THE SCREEN
 fn main() {
@@ -41,6 +43,8 @@ fn main() {
                 ))
         .insert_resource(BestBrain::default())
         .insert_resource(BestSucess::default())
+        .insert_resource(DeadJulianas::default())
+        .insert_resource(Mutations::default())
         .run();
 }
 

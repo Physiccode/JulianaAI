@@ -3,13 +3,15 @@ use bevy::render::mesh::VertexAttributeValues;
 use super::data::*;
 
 pub fn create_ground(
+    /*
     mut commands:Commands,
     mut meshes:ResMut<Assets<Mesh>>,
     mut materials:ResMut<Assets<StandardMaterial>>
-    /*
-    mut gizmos:Gizmos
     */
+    mut gizmos:Gizmos
     ) {
+
+    /*
     let terrain_mesh = Plane3d::default()
         .mesh()
         .size(50.0,50.0)
@@ -37,7 +39,7 @@ pub fn create_ground(
             Transform::from_xyz(0.0,0.0,0.0)
             ));
 
-    /*
+*/
 
     let color = Color::srgb(0.35,0.35,0.35); 
     for i in -20..=20 {
@@ -45,7 +47,6 @@ pub fn create_ground(
         gizmos.line(Vec3::new(p,0.0,-20.0),Vec3::new(p,0.0,20.0),color);
         gizmos.line(Vec3::new(-20.0,0.0,p),Vec3::new(20.0,0.0,p),color);
     }
-    */
 }
 
 
@@ -58,6 +59,7 @@ pub fn get_terrain_height( x:f32,z:f32) ->f32 {
 pub fn ground_entities(
     mut query:Query<&mut Transform,Or<(With<Juliana>,With<AntiJuliana>)>>
     ){
+    /*
     for mut transform in query.iter_mut() {
         let current_x = transform.translation.x;
         let current_z = transform.translation.z;
@@ -65,6 +67,7 @@ pub fn ground_entities(
         let height_offset = 0.5;
         transform.translation.y = ground_y+height_offset;
     }
+    */
 }
 
 pub fn setup_background(
